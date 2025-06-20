@@ -1,0 +1,49 @@
+import "java.util.List";
+import "java.util.Collection";
+import "org.bukkit.entity.Entity";
+import "org.bukkit.entity.ItemDisplay";
+import "org.bukkit.attribute.Attribute";
+import "org.bukkit.util.BlockIterator";
+import "org.bukkit.event.player.PlayerInteractEvent";
+
+CustomFurniture getTargetFurniture(Player $player, int range) {
+    BlockIterator iterator = new BlockIterator($player.getEyeLocation(), 0, range);
+    while(iterator.hasNext()){
+        var loc = iterator.next().getLocation();
+        CustomFurniture furniture = CustomFurniture.byAlreadySpawned(loc.getBlock());
+        if (furniture != null) return furniture;
+    }
+    return null;
+}
+
+// On interact furniture
+if ($event instanceof PlayerInteractEvent interactEvent) { 
+    var clickedBlock = interactEvent.getClickedBlock();
+    var handItem = $player.getInventory().getItemInMainHand();
+    if (!clickedBlock.getType().name().contains("HANGING_SIGN") || handItem.getType() == Material.AIR) return;
+    var furniture = CustomFurniture.byAlreadySpawned(clickedBlock);
+    var itemDisplays = furniture.getEntity().getPassengers().stream().map(e -> (ItemDisplay) e).toList();
+
+    var itemToPlace = handItem.clone();
+    itemToPlace.setAmount(1);
+    
+    handItem.setAmount(handItem.getAmount()-1);
+    var itemToReturn = itemDisplays.get(0).getItemStack();
+    if (itemToReturn.getAmount() == 1) clickedBlock.getWorld().dropItemNaturally(clickedBlock.getLocation(), itemToReturn);
+    itemDisplays.forEach(display -> display.setItemStack(itemToPlace));
+
+// On break furniture
+} else {
+    cancelEvent();
+    CustomFurniture furniture = getTargetFurniture($player, (int) $player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE).getValue());
+    if (furniture == null) return;
+
+    const loc = furniture.getEntity().getLocation();
+    var itemDisplays = furniture.getEntity().getPassengers().stream().map(e -> (ItemDisplay) e).toList();
+    
+    var itemToReturn = itemDisplays.get(0).getItemStack();
+    if (!itemDisplays.isEmpty() && itemToReturn.getAmount() == 1) loc.getWorld().dropItemNaturally(loc, itemToReturn);
+    loc.getWorld().dropItemNaturally(loc, customStack(furniture.getNamespacedID().replaceFirst("_interact$", "")).getItemStack());
+    itemDisplays.forEach(display -> display.remove());
+    furniture.getEntity().remove();
+}

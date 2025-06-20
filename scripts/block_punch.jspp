@@ -1,0 +1,48 @@
+import "org.bukkit.Particle";
+import "org.bukkit.Sound";
+import "org.bukkit.GameMode";
+import "org.bukkit.block.BlockFace";
+import "org.bukkit.block.PistonMoveReaction";
+import "org.bukkit.event.player.PlayerInteractEvent";
+import "org.bukkit.inventory.meta.Damageable";
+
+void applyItemDamage(ItemStack item, CustomStack customStack, Player player) {
+    var meta = (Damageable) item.getItemMeta();
+    if (meta.getDamage() >= customStack.getMaxDurability()){
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
+        player.getWorld().spawnParticle(Particle.ITEM, player.getLocation().add(0, 1.0, 0), 15, 0.2, 0.2, 0.2, 0.1, item);
+        if (item.equals(player.getInventory().getItemInMainHand())) {
+            player.getInventory().setItemInMainHand(null);
+        } else if (item.equals(player.getInventory().getItemInOffHand())) {
+            player.getInventory().setItemInOffHand(null);
+        }
+    } else {
+        meta.setDamage(meta.getDamage() + 1);
+        item.setItemMeta(meta);
+    }   
+}
+
+if ($event instanceof PlayerInteractEvent interactEvent && interactEvent.hasBlock()) {
+    var clickedBlock = interactEvent.getClickedBlock();
+    if (clickedBlock.getPistonMoveReaction() == PistonMoveReaction.MOVE) {
+        var loc = clickedBlock.getLocation();
+        loc.getWorld().spawnParticle(Particle.ITEM, loc.add(0.5,0.5,0.5), 16, 0.2, 0.2, 0.2, 0.1, newStack(clickedBlock.getType()));
+        loc.getWorld().playSound(loc, clickedBlock.getBlockData().getSoundGroup().getBreakSound(), 1.0f, 1.0f);
+
+        switch (interactEvent.getBlockFace()) {
+            case UP -> loc.add(0.0, -1.0, 0.0);
+            case DOWN -> loc.add(0.0, 1.0, 0.0);
+            case EAST -> loc.add(-1.0, 0.0, 0.0);
+            case WEST -> loc.add(1.0, 0.0, 0.0);
+            case SOUTH -> loc.add(0.0, 0.0, -1.0);
+            default -> loc.add(0.0, 0.0, 1.0);
+        };
+
+        var newBlock = block(loc);
+        if(newBlock.getType() == Material.AIR) {
+            placeBlock(newBlock, clickedBlock.getType());
+            removeBlock(clickedBlock);
+            if ($player.getGameMode() != GameMode.CREATIVE) applyItemDamage($itemStack, $customStack, $player);
+        }
+    }
+}

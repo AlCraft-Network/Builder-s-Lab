@@ -1,0 +1,17 @@
+import "org.bukkit.Particle";
+import "org.bukkit.Sound";
+import "org.bukkit.GameMode";
+import "org.bukkit.event.player.PlayerInteractEvent";
+
+if ($event instanceof PlayerInteractEvent interactEvent && interactEvent.hasBlock()) {
+    var clickedBlock = interactEvent.getClickedBlock();
+    if (clickedBlock.getType() == Material.DIRT) {
+        cancelEvent();
+        clickedBlock.setType(Material.GRASS_BLOCK);
+        $player.getWorld().playSound(clickedBlock.getLocation(), Sound.ITEM_BONE_MEAL_USE, 1.0f, 1.0f);
+        $player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, clickedBlock.getLocation().add(0.5,1,0.5), 3, 0.5, 0.5, 0.5, 0.1);
+        if ($player.getGameMode() != GameMode.CREATIVE){
+            $itemStack.setAmount($itemStack.getAmount()-1);
+        }
+    }
+}

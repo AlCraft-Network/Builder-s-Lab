@@ -1,0 +1,99 @@
+import "org.bukkit.Location";
+import "org.bukkit.Particle";
+import "org.bukkit.Sound";
+import "org.bukkit.attribute.Attribute";
+import "org.bukkit.block.Block";
+import "org.bukkit.block.data.Rotatable";
+import "org.bukkit.Material";
+import "org.bukkit.entity.EntityType";
+import "org.bukkit.entity.Skeleton";
+import "org.bukkit.event.player.PlayerInteractEvent";
+
+void breakBlock(Block block) {
+    Location loc = block.getLocation();
+    loc.getWorld().spawnParticle(Particle.ITEM, loc.add(0.5,0.5,0.5), 16, 0.2, 0.2, 0.2, 0.1, newStack(block.getType()));
+    loc.getWorld().playSound(loc, block.getBlockData().getSoundGroup().getBreakSound(), 1.0f, 1.0f);
+    removeBlock(block);
+}
+
+void summonMob(Player player, Location loc) {
+    Skeleton skeleton = (Skeleton) loc.getWorld().spawnEntity(loc, EntityType.SKELETON);
+    skeleton.getEquipment().setHelmet(customStack("test:skeleton_crown").getItemStack());
+    skeleton.getEquipment().setChestplate(customStack("test:experience_book").getItemStack());
+    skeleton.getEquipment().setChestplateDropChance(1.0f);
+    skeleton.getAttribute(Attribute.MAX_HEALTH).setBaseValue(200.0);
+    skeleton.setHealth(200.0);
+    skeleton.getAttribute(Attribute.SCALE).setBaseValue(1.2);
+    loc.getWorld().spawnParticle(Particle.LARGE_SMOKE, loc, 26, 0.2, 0.2, 0.2, 0.1);
+    loc.getWorld().playSound(loc, Sound.ENTITY_EVOKER_PREPARE_SUMMON, 1.0f, 1.0f);
+    msg(player, "You summoned a <red>Skeleton</red> king!", true);
+}
+
+float getYawFromRotation(Block block) {
+    return switch (((Rotatable) block.getBlockData()).getRotation()) {
+        case SOUTH -> 180.0f;
+        case SOUTH_SOUTH_WEST -> -157.5f;
+        case SOUTH_SOUTH_EAST -> 157.5f;
+        case SOUTH_WEST -> -135.0f;
+        case WEST_SOUTH_WEST -> -112.5f;
+        case WEST -> -90.0f;
+        case WEST_NORTH_WEST -> -67.5f;
+        case NORTH -> 0.0f;
+        case NORTH_WEST -> -45.0f;
+        case NORTH_NORTH_WEST -> -22.5f;
+        case NORTH_NORTH_EAST -> 22.5f;
+        case NORTH_EAST -> 45.0f;
+        case EAST_NORTH_EAST -> 67.5f;
+        case EAST -> 90.0f;
+        case EAST_SOUTH_EAST -> 112.5f;
+        case SOUTH_EAST -> 135.0f;
+        default -> 0.0f;
+    };
+}
+
+record TotemBlock(double x, double y, double z, Material material, int delay) {}
+TotemBlock[][] validTotems = {
+    {
+        new TotemBlock(0.0, 0.0, 0.0, Material.SKELETON_SKULL, 0),
+        new TotemBlock(0.0, -1.0, 0.0, Material.BONE_BLOCK, 5),
+        new TotemBlock(0.0, -2.0, 0.0, Material.BONE_BLOCK, 10),
+    }
+ };
+
+if ($event instanceof PlayerInteractEvent interactEvent) {
+    Block clickedBlock = interactEvent.getClickedBlock();
+    if (clickedBlock == null) return;
+    Location loc = clickedBlock.getLocation();
+
+    boolean isValidTotem = true;
+    Block[] blocks = null;
+    TotemBlock[] totem = null;
+
+    for (TotemBlock[] t : validTotems) {
+        totem = t;
+        blocks = new Block[totem.length];
+        isValidTotem = true;
+
+        for (int i = 0; i < totem.length; i++) {
+            blocks[i] = block(loc.clone().add(totem[i].x, totem[i].y, totem[i].z));
+            if (blocks[i].getType() != totem[i].material) {
+                isValidTotem = false;
+                break;
+            }
+        }
+        if (isValidTotem) break;
+    }
+
+    if (!isValidTotem) return;
+    $itemStack.setAmount($itemStack.getAmount()-1);
+    $player.updateInventory();
+    
+    loc.setYaw(getYawFromRotation(clickedBlock));
+
+    for (int i = 0; i < blocks.length; i++) {
+        Block b = blocks[i];
+        delay(totem[i].delay, () => breakBlock(b));
+    }
+    TotemBlock lastBlock = totem[totem.length-1];
+    delay(lastBlock.delay+5, () => summonMob($player, loc.clone().add(lastBlock.x+0.5,lastBlock.y,lastBlock.z+0.5)));
+}

@@ -1,0 +1,58 @@
+import "org.bukkit.Material";
+import "org.bukkit.block.Block";
+import "org.bukkit.event.block.BlockBreakEvent";
+import "org.bukkit.Particle";
+import "org.bukkit.Sound";
+import "java.util.Collection";
+import "java.util.HashMap";
+import "org.bukkit.GameMode";
+import "org.bukkit.inventory.meta.Damageable";
+
+void applyItemDamage(ItemStack item, CustomStack customStack, Player player) {
+    var meta = (Damageable) item.getItemMeta();
+    if (meta.getDamage() >= customStack.getMaxDurability()){
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
+        player.getWorld().spawnParticle(Particle.ITEM, player.getLocation().add(0, 1.0, 0), 15, 0.2, 0.2, 0.2, 0.1, item);
+        if (item.equals(player.getInventory().getItemInMainHand())) {
+            player.getInventory().setItemInMainHand(null);
+        } else if (item.equals(player.getInventory().getItemInOffHand())) {
+            player.getInventory().setItemInOffHand(null);
+        }
+    } else {
+        meta.setDamage(meta.getDamage() + 1);
+        item.setItemMeta(meta);
+    }   
+}
+
+boolean isCrop(Material type) {
+    return type == Material.WHEAT ||
+           type == Material.CARROTS ||
+           type == Material.POTATOES ||
+           type == Material.BEETROOTS;
+}
+
+if ($event instanceof BlockBreakEvent breakEvent) {
+    Block block = breakEvent.getBlock();
+    if (!isCrop(block.getType())) return;
+    
+    $player.getWorld().spawnParticle(Particle.SWEEP_ATTACK, block.getLocation().add(0.5, 0.5, 0.5), 1);
+    $player.getWorld().playSound(block.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 0.6f, 1.0f);
+
+    int radius = 1;
+    for (int x = -radius; x <= radius; x++) {
+        for (int z = -radius; z <= radius; z++) {
+            Block nearby = block.getRelative(x, 0, z);
+            if (isCrop(nearby.getType())) {
+                Collection<ItemStack> drops = nearby.getDrops();
+                nearby.setType(Material.AIR);
+
+                for (ItemStack drop : drops) {
+                    HashMap<Integer, ItemStack> leftover = $player.getInventory().addItem(drop);
+                    leftover.values().forEach(item -> block.getWorld().dropItemNaturally(nearby.getLocation(), item));
+                }
+            }
+        }
+    }
+
+    if ($player.getGameMode() != GameMode.CREATIVE) applyItemDamage($itemStack, $customStack, $player);
+}

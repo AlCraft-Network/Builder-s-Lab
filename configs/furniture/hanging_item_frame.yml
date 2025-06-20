@@ -1,0 +1,76 @@
+info:
+  namespace: builderslab
+recipes:
+  crafting_table:
+    hanging_item_frame:
+      permission: builderslab.decorative.hanging_item_frame
+      enabled: true
+      pattern:
+      - XIX
+      - XFX
+      - XIX
+      ingredients:
+        I: IRON_NUGGET
+        F: ITEM_FRAME
+      result:
+        item: builderslab:hanging_item_frame
+        amount: 1
+items:
+# ITEM
+  hanging_item_frame:
+    display_name: display-name-hanging_item_frame
+    permission: builderslab.decorative.hanging_item_frame
+    lore:
+    - lore-hanging_item_frame
+    resource:
+      material: PAPER
+      generate: true
+      texture: item/hanging_item_frame
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 4
+    events:
+      interact:
+        left:
+          script:
+            name: builderslab:hanging_item_frame
+        left_shift:
+          script:
+            name: builderslab:hanging_item_frame
+# FURNITURE
+  hanging_item_frame_interact:
+    display_name: display-name-hanging_item_frame
+    permission: builderslab.decorative.hanging_frame
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/invisible
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    behaviours:
+      furniture:
+        solid: false
+        entity: item_display
+        fixed_rotation: true
+        placeable_on:
+          floor: true
+          ceiling: false
+          walls: false
+        hitbox:
+          height: 1
+    events:
+      placed_furniture:
+        interact:
+          script:
+            name: hanging_item_frame_interact
+        break:
+          script:
+            name: hanging_item_frame_interact
+scripts:
+  hanging_item_frame:
+    path: scripts/hanging_item_frame.jspp
+  hanging_item_frame_interact:
+    path: scripts/hanging_item_frame_interact.jspp

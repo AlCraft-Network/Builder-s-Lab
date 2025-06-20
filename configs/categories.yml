@@ -1,0 +1,58 @@
+info:
+  namespace: builderslab
+categories:
+  builderslab-tools:
+    enabled: true
+    icon: "builderslab:block_puncher"
+    name: display-category-tools
+    permission: ia.menu.builderslab.tools
+    items:
+      - "builderslab:block_puncher"
+      - "builderslab:wrench"
+      - "builderslab:trowel"
+      - "builderslab:chisel"
+      - "builderslab:carpenter_hammer"
+      - "builderslab:sickle"
+  builderslab-items:
+    enabled: true
+    icon: "builderslab:mineralized_pile"
+    name: display-category-items
+    permission: ia.menu.builderslab.items
+    items:
+      - "builderslab:hello_world_stick"
+      - "builderslab:skeleton_crown"
+      - "builderslab:slime_egg"
+      - "builderslab:experience_book"
+      - "builderslab:mineralized_pile"
+      - "builderslab:enriched_bone_meal"
+  builderslab-furniture:
+    enabled: true
+    icon: "builderslab:hanging_item_frame"
+    name: display-category-furniture
+    permission: ia.menu.builderslab.furniture
+    items:
+      - "builderslab:hanging_item_frame"
+      - "builderslab:oak_rack"
+      - "builderslab:spruce_rack"
+      - "builderslab:birch_rack"
+      - "builderslab:jungle_rack"
+      - "builderslab:acacia_rack"
+      - "builderslab:dark_oak_rack"
+      - "builderslab:mangrove_rack"
+      - "builderslab:cherry_rack"
+      - "builderslab:pale_oak_rack"
+      - "builderslab:bamboo_rack"
+      - "builderslab:crimson_rack"
+      - "builderslab:warped_rack"
+      - "builderslab:oak_wall_rack"
+      - "builderslab:spruce_wall_rack"
+      - "builderslab:birch_wall_rack"
+      - "builderslab:jungle_wall_rack"
+      - "builderslab:acacia_wall_rack"
+      - "builderslab:dark_oak_wall_rack"
+      - "builderslab:mangrove_wall_rack"
+      - "builderslab:cherry_wall_rack"
+      - "builderslab:pale_oak_wall_rack"
+      - "builderslab:bamboo_wall_rack"
+      - "builderslab:crimson_wall_rack"
+      - "builderslab:warped_wall_rack"

@@ -1,0 +1,284 @@
+info:
+  namespace: builderslab
+recipes:
+  crafting_table:
+    oak_rack:
+      permission: builderslab.decorative.rack
+      enabled: true
+      pattern:
+      - XXX
+      - PSP
+      - PXP
+      ingredients:
+        P: OAK_PLANKS
+        S: STICK
+      result:
+        item: builderslab:oak_rack
+        amount: 1
+    spruce_rack:
+      permission: builderslab.decorative.rack
+      enabled: true
+      pattern:
+      - XXX
+      - PSP
+      - PXP
+      ingredients:
+        P: SPRUCE_PLANKS
+        S: STICK
+      result:
+        item: builderslab:spruce_rack
+        amount: 1
+    birch_rack:
+      permission: builderslab.decorative.rack
+      enabled: true
+      pattern:
+      - XXX
+      - PSP
+      - PXP
+      ingredients:
+        P: BIRCH_PLANKS
+        S: STICK
+      result:
+        item: builderslab:birch_rack
+        amount: 1
+    jungle_rack:
+      permission: builderslab.decorative.rack
+      enabled: true
+      pattern:
+      - XXX
+      - PSP
+      - PXP
+      ingredients:
+        P: JUNGLE_PLANKS
+        S: STICK
+      result:
+        item: builderslab:jungle_rack
+        amount: 1
+    acacia_rack:
+      permission: builderslab.decorative.rack
+      enabled: true
+      pattern:
+      - XXX
+      - PSP
+      - PXP
+      ingredients:
+        P: ACACIA_PLANKS
+        S: STICK
+      result:
+        item: builderslab:acacia_rack
+        amount: 1
+    dark_oak_rack:
+      permission: builderslab.decorative.rack
+      enabled: true
+      pattern:
+      - XXX
+      - PSP
+      - PXP
+      ingredients:
+        P: DARK_OAK_PLANKS
+        S: STICK
+      result:
+        item: builderslab:dark_oak_rack
+        amount: 1
+    mangrove_rack:
+      permission: builderslab.decorative.rack
+      enabled: true
+      pattern:
+      - XXX
+      - PSP
+      - PXP
+      ingredients:
+        P: MANGROVE_PLANKS
+        S: STICK
+      result:
+        item: builderslab:mangrove_rack
+        amount: 1
+    cherry_rack:
+      permission: builderslab.decorative.rack
+      enabled: true
+      pattern:
+      - XXX
+      - PSP
+      - PXP
+      ingredients:
+        P: CHERRY_PLANKS
+        S: STICK
+      result:
+        item: builderslab:cherry_rack
+        amount: 1
+    pale_oak_rack:
+      permission: builderslab.decorative.rack
+      enabled: true
+      pattern:
+      - XXX
+      - PSP
+      - PXP
+      ingredients:
+        P: PALE_OAK_PLANKS
+        S: STICK
+      result:
+        item: builderslab:pale_oak_rack
+        amount: 1
+    bamboo_rack:
+      permission: builderslab.decorative.rack
+      enabled: true
+      pattern:
+      - XXX
+      - PSP
+      - PXP
+      ingredients:
+        P: BAMBOO_PLANKS
+        S: STICK
+      result:
+        item: builderslab:bamboo_rack
+        amount: 1
+    crimson_rack:
+      permission: builderslab.decorative.rack
+      enabled: true
+      pattern:
+      - XXX
+      - PSP
+      - PXP
+      ingredients:
+        P: CRIMSON_PLANKS
+        S: STICK
+      result:
+        item: builderslab:crimson_rack
+        amount: 1
+    warped_rack:
+      permission: builderslab.decorative.rack
+      enabled: true
+      pattern:
+      - XXX
+      - PSP
+      - PXP
+      ingredients:
+        P: WARPED_PLANKS
+        S: STICK
+      result:
+        item: builderslab:warped_rack
+        amount: 1
+items:
+  template_rack:
+    display_name: Rack
+    permission: builderslab.decorative.rack
+    template: true
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/oak_rack
+    behaviours:
+      furniture:
+        solid: false
+        entity: item_display
+        fixed_rotation: false
+        placeable_on:
+          floor: true
+          ceiling: false
+          walls: false
+        hitbox:
+          height: 1
+        sound:
+          place:
+            name: block.wood.place
+          break:
+            name: block.wood.break
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      placed_furniture:
+        interact:
+          script:
+            name: rack
+        break:
+          script:
+            name: rack
+  oak_rack:
+    display_name: display-name-oak_rack
+    variant_of: template_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/oak_rack
+  spruce_rack:
+    display_name: display-name-spruce_rack
+    variant_of: template_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/spruce_rack
+  birch_rack:
+    display_name: display-name-birch_rack
+    variant_of: template_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/birch_rack
+  jungle_rack:
+    display_name: display-name-jungle_rack
+    variant_of: template_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/jungle_rack
+  acacia_rack:
+    display_name: display-name-acacia_rack
+    variant_of: template_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/acacia_rack
+  dark_oak_rack:
+    display_name: display-name-dark_oak_rack
+    variant_of: template_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/dark_oak_rack
+  mangrove_rack:
+    display_name: display-name-mangrove_rack
+    variant_of: template_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/mangrove_rack
+  cherry_rack:
+    display_name: display-name-cherry_rack
+    variant_of: template_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/cherry_rack
+  pale_oak_rack:
+    display_name: display-name-pale_oak_rack
+    variant_of: template_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/pale_oak_rack
+  bamboo_rack:
+    display_name: display-name-bamboo_rack
+    variant_of: template_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/bamboo_rack
+  crimson_rack:
+    display_name: display-name-crimson_rack
+    variant_of: template_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/crimson_rack
+  warped_rack:
+    display_name: display-name-warped_rack
+    variant_of: template_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/warped_rack
+scripts:
+  rack:
+    path: scripts/rack.jspp

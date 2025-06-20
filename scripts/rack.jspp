@@ -1,0 +1,82 @@
+import "java.util.Collection";
+import "java.util.List";
+import "java.util.Optional";
+import "org.joml.Quaternionf";
+import "org.joml.Vector3f";
+import "org.bukkit.event.player.PlayerInteractEvent";
+import "org.bukkit.entity.Entity";
+import "org.bukkit.entity.ItemDisplay";
+import "org.bukkit.util.Transformation";
+import "org.bukkit.attribute.Attribute";
+import "org.bukkit.util.BlockIterator";
+import "dev.lone.itemsadder.api.CustomFurniture";
+
+void getBackItem(Player player, ItemStack handItem, ItemDisplay displayEntity) {
+    ItemStack item = displayEntity.getItemStack();
+    
+    if (handItem.getType().isAir()) {
+        player.getInventory().setItemInMainHand(item);
+    } else {
+        Map<Integer, ItemStack> leftover = player.getInventory().addItem(item);
+        leftover.values().forEach(remaining -> player.getWorld().dropItemNaturally(player.getLocation(), remaining));
+    }
+}
+
+CustomFurniture getTargetFurniture(Player $player, int range) {
+    BlockIterator iterator = new BlockIterator($player.getEyeLocation(), 0, range);
+    while(iterator.hasNext()){
+        var loc = iterator.next().getLocation();
+        CustomFurniture furniture = CustomFurniture.byAlreadySpawned(loc.getBlock());
+        if (furniture != null) return furniture;
+    }
+    return null;
+}
+
+// On interact furniture
+if ($event instanceof PlayerInteractEvent) { 
+    cancelEvent();
+    CustomFurniture furniture = getTargetFurniture($player, (int) $player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE).getValue());
+    if (furniture == null) return;
+
+    var rack = furniture.getEntity();
+    var handItem = $player.getInventory().getItemInMainHand();
+    var itemDisplays = rack.getPassengers();
+
+    if (!handItem.getType().isAir() && !handItem.getType().isBlock()) {
+        var itemToPlace = handItem.clone();
+        itemToPlace.setAmount(1);
+        
+        handItem.setAmount(handItem.getAmount() - 1);
+
+        // Add item
+        if (itemDisplays.size() < 2) {
+            var display = rack.getWorld().spawn(rack.getLocation(), ItemDisplay.class);
+            display.setItemStack(itemToPlace);
+            display.setTransformation(new Transformation( new Vector3f((itemDisplays.isEmpty() ? -0.15f: 0.15f), 0.55f, 0.0f), new Quaternionf().rotateY((float) Math.toRadians(22.5f)).rotateZ((float) Math.toRadians(135.0f)), new Vector3f(0.8f, 0.8f, 0.8f), new Quaternionf()));
+            rack.addPassenger(display);
+        // Replace item
+        } else {
+            var lastDisplay = (ItemDisplay) itemDisplays.get(itemDisplays.size() - 1);
+            getBackItem($player, handItem, lastDisplay);
+            lastDisplay.setItemStack(itemToPlace);
+        }
+    // Remove item
+    } else if (itemDisplays.size() > 0) {
+        var lastDisplay = (ItemDisplay) itemDisplays.get(itemDisplays.size() - 1);
+        getBackItem($player, handItem, lastDisplay);
+        lastDisplay.remove();
+    }
+// On break furniture
+} else {
+    CustomFurniture furniture = getTargetFurniture($player, (int) $player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE).getValue());
+    if (furniture == null) return;
+
+    var rack = furniture.getEntity();
+    const loc = furniture.getEntity().getLocation();
+    var itemDisplays = rack.getPassengers().stream().map(e -> (ItemDisplay) e).toList();
+
+    itemDisplays.forEach(display -> {
+        loc.getWorld().dropItemNaturally(loc, display.getItemStack());
+        display.remove();
+    });
+}

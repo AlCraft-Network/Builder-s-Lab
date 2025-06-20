@@ -1,0 +1,284 @@
+info:
+  namespace: builderslab
+recipes:
+  crafting_table:
+    oak_wall_rack:
+      permission: builderslab.decorative.wall_rack
+      enabled: true
+      pattern:
+      - XXX
+      - SXS
+      - PXP
+      ingredients:
+        P: OAK_PLANKS
+        S: STICK
+      result:
+        item: builderslab:oak_wall_rack
+        amount: 1
+    spruce_wall_rack:
+      permission: builderslab.decorative.wall_rack
+      enabled: true
+      pattern:
+      - XXX
+      - SXS
+      - PXP
+      ingredients:
+        P: SPRUCE_PLANKS
+        S: STICK
+      result:
+        item: builderslab:spruce_rack
+        amount: 1
+    birch_wall_rack:
+      permission: builderslab.decorative.wall_rack
+      enabled: true
+      pattern:
+      - XXX
+      - SXS
+      - PXP
+      ingredients:
+        P: BIRCH_PLANKS
+        S: STICK
+      result:
+        item: builderslab:birch_wall_rack
+        amount: 1
+    jungle_wall_rack:
+      permission: builderslab.decorative.wall_rack
+      enabled: true
+      pattern:
+      - XXX
+      - SXS
+      - PXP
+      ingredients:
+        P: JUNGLE_PLANKS
+        S: STICK
+      result:
+        item: builderslab:jungle_wall_rack
+        amount: 1
+    acacia_wall_rack:
+      permission: builderslab.decorative.wall_rack
+      enabled: true
+      pattern:
+      - XXX
+      - SXS
+      - PXP
+      ingredients:
+        P: ACACIA_PLANKS
+        S: STICK
+      result:
+        item: builderslab:acacia_wall_rack
+        amount: 1
+    dark_oak_wall_rack:
+      permission: builderslab.decorative.wall_rack
+      enabled: true
+      pattern:
+      - XXX
+      - SXS
+      - PXP
+      ingredients:
+        P: DARK_OAK_PLANKS
+        S: STICK
+      result:
+        item: builderslab:dark_oak_wall_rack
+        amount: 1
+    mangrove_wall_rack:
+      permission: builderslab.decorative.wall_rack
+      enabled: true
+      pattern:
+      - XXX
+      - SXS
+      - PXP
+      ingredients:
+        P: MANGROVE_PLANKS
+        S: STICK
+      result:
+        item: builderslab:mangrove_wall_rack
+        amount: 1
+    cherry_wall_rack:
+      permission: builderslab.decorative.wall_rack
+      enabled: true
+      pattern:
+      - XXX
+      - SXS
+      - PXP
+      ingredients:
+        P: CHERRY_PLANKS
+        S: STICK
+      result:
+        item: builderslab:cherry_wall_rack
+        amount: 1
+    pale_oak_wall_rack:
+      permission: builderslab.decorative.wall_rack
+      enabled: true
+      pattern:
+      - XXX
+      - SXS
+      - PXP
+      ingredients:
+        P: PALE_OAK_PLANKS
+        S: STICK
+      result:
+        item: builderslab:pale_oak_wall_rack
+        amount: 1
+    bamboo_wall_rack:
+      permission: builderslab.decorative.wall_rack
+      enabled: true
+      pattern:
+      - XXX
+      - SXS
+      - PXP
+      ingredients:
+        P: BAMBOO_PLANKS
+        S: STICK
+      result:
+        item: builderslab:bamboo_wall_rack
+        amount: 1
+    crimson_wall_rack:
+      permission: builderslab.decorative.wall_rack
+      enabled: true
+      pattern:
+      - XXX
+      - SXS
+      - PXP
+      ingredients:
+        P: CRIMSON_PLANKS
+        S: STICK
+      result:
+        item: builderslab:crimson_wall_rack
+        amount: 1
+    warped_wall_rack:
+      permission: builderslab.decorative.wall_rack
+      enabled: true
+      pattern:
+      - XXX
+      - SXS
+      - PXP
+      ingredients:
+        P: WARPED_PLANKS
+        S: STICK
+      result:
+        item: builderslab:warped_wall_rack
+        amount: 1
+items:
+  template_wall_rack:
+    display_name: Wall rack
+    permission: builderslab.decorative.wall_rack
+    template: true
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/oak_wall_rack
+    behaviours:
+      furniture:
+        solid: false
+        entity: item_display
+        fixed_rotation: true
+        placeable_on:
+          floor: false
+          ceiling: false
+          walls: true
+        hitbox:
+          height: 1
+        sound:
+          place:
+            name: block.wood.place
+          break:
+            name: block.wood.break
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      placed_furniture:
+        interact:
+          script:
+            name: wall_rack
+        break:
+          script:
+            name: wall_rack
+  acacia_wall_rack:
+    display_name: display-name-acacia_wall_rack
+    variant_of: template_wall_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/acacia_wall_rack
+  bamboo_wall_rack:
+    display_name: display-name-bamboo_wall_rack
+    variant_of: template_wall_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/bamboo_wall_rack
+  birch_wall_rack:
+    display_name: display-name-birch_wall_rack
+    variant_of: template_wall_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/birch_wall_rack
+  cherry_wall_rack:
+    display_name: display-name-cherry_wall_rack
+    variant_of: template_wall_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/cherry_wall_rack
+  crimson_wall_rack:
+    display_name: display-name-crimson_wall_rack
+    variant_of: template_wall_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/crimson_wall_rack
+  dark_oak_wall_rack:
+    display_name: display-name-dark_oak_wall_rack
+    variant_of: template_wall_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/dark_oak_wall_rack
+  jungle_wall_rack:
+    display_name: display-name-jungle_wall_rack
+    variant_of: template_wall_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/jungle_wall_rack
+  mangrove_wall_rack:
+    display_name: display-name-mangrove_wall_rack
+    variant_of: template_wall_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/mangrove_wall_rack
+  oak_wall_rack:
+    display_name: display-name-oak_wall_rack
+    variant_of: template_wall_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/oak_wall_rack
+  pale_oak_wall_rack:
+    display_name: display-name-pale_oak_wall_rack
+    variant_of: template_wall_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/pale_oak_wall_rack
+  spruce_wall_rack:
+    display_name: display-name-spruce_wall_rack
+    variant_of: template_wall_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/spruce_wall_rack
+  warped_wall_rack:
+    display_name: display-name-warped_wall_rack
+    variant_of: template_wall_rack
+    resource:
+      material: PAPER
+      generate: false
+      model_path: item/warped_wall_rack
+scripts:
+  wall_rack:
+    path: scripts/wall_rack.jspp

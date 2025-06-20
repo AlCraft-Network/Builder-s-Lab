@@ -1,0 +1,240 @@
+info:
+  namespace: builderslab
+recipes:
+  crafting_table:
+    block_puncher:
+      permission: builderslab.items.block_puncher
+      enabled: true
+      pattern:
+      - XP
+      - SX
+      ingredients:
+        P: PISTON
+        S: STICK
+      result:
+        item: builderslab:block_puncher
+        amount: 1
+    carpenter_hammer:
+      permission: builderslab.items.carpenter_hammer
+      enabled: true
+      pattern:
+      - XXX
+      - XII
+      - XSX
+      ingredients:
+        I: IRON_INGOT
+        S: STICK
+      result:
+        item: builderslab:carpenter_hammer
+        amount: 1
+    chisel:
+      permission: builderslab.items.chisel
+      enabled: true
+      pattern:
+      - XXI
+      - XIX
+      - SXX
+      ingredients:
+        I: IRON_INGOT
+        S: STICK
+      result:
+        item: builderslab:chisel
+        amount: 1
+    trowel:
+      permission: builderslab.items.chisel
+      enabled: true
+      pattern:
+      - XIX
+      - IIX
+      - SXX
+      ingredients:
+        I: IRON_INGOT
+        S: STICK
+      result:
+        item: builderslab:trowel
+        amount: 1
+    wrench:
+      permission: builderslab.items.wrench
+      enabled: true
+      pattern:
+      - XIX
+      - XII
+      - SXX
+      ingredients:
+        I: IRON_INGOT
+        S: STICK
+      result:
+        item: builderslab:wrench
+        amount: 1
+    sickle:
+      permission: builderslab.items.sickle
+      enabled: true
+      pattern:
+      - XIX
+      - XXI
+      - SIX
+      ingredients:
+        I: IRON_INGOT
+        S: STICK
+      result:
+        item: builderslab:sickle
+        amount: 1
+items:
+  block_puncher:
+    display_name: display-name-block_puncher
+    permission: builderslab.items.block_puncher
+    lore:
+    - lore-block_puncher
+    resource:
+      material: WOODEN_SWORD
+      generate: true
+      texture: item/block_puncher
+    durability:
+      max_custom_durability: 250
+    attribute_modifiers:
+      mainhand:
+        attackDamage: 1
+        attackSpeed: 5
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      interact:
+        right:
+          script:
+            name: builderslab:block_punch
+        right_shift:
+          script:
+            name: builderslab:block_punch
+  wrench:
+    display_name: display-name-wrench
+    permission: builderslab.items.wrench
+    lore:
+    - lore-wrench
+    resource:
+      material: WOODEN_SWORD
+      generate: true
+      texture: item/wrench
+    durability:
+      max_custom_durability: 250
+    attribute_modifiers:
+      mainhand:
+        attackDamage: 1
+        attackSpeed: 5
+    events:
+      interact:
+        right:
+          script:
+            name: builderslab:rotate_block
+        right_shift:
+          script:
+            name: builderslab:rotate_block
+  trowel:
+    display_name: display-name-trowel
+    permission: builderslab.items.trowel
+    lore:
+    - lore-1-trowel
+    - lore-2-trowel
+    resource:
+      material: WOODEN_SWORD
+      generate: true
+      texture: item/trowel
+    durability:
+      max_custom_durability: 500
+    attribute_modifiers:
+      mainhand:
+        attackDamage: 1
+        attackSpeed: 5
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      interact:
+        right:
+          script:
+            name: builderslab:random_block_placer
+        right_shift:
+          script:
+            name: builderslab:random_block_placer
+  chisel:
+    display_name: display-name-chisel
+    permission: builderslab.items.chisel
+    lore:
+    - lore-1-chisel
+    - lore-2-chisel
+    resource:
+      material: WOODEN_SWORD
+      generate: true
+      texture: item/chisel
+    durability:
+      max_custom_durability: 250
+    attribute_modifiers:
+      mainhand:
+        attackDamage: 1
+        attackSpeed: 5
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 4
+    events:
+      interact:
+        left:
+          script:
+            name: builderslab:block_replacer
+        left_shift:
+          script:
+            name: builderslab:block_replacer
+  carpenter_hammer:
+    display_name: display-name-carpenter_hammer
+    permission: builderslab.items.carpenter_hammer
+    lore:
+    - lore-1-carpenter_hammer
+    - lore-2-carpenter_hammer
+    resource:
+      material: WOODEN_SWORD
+      generate: true
+      texture: item/carpenter_hammer
+    durability:
+      max_custom_durability: 250
+    attribute_modifiers:
+      mainhand:
+        attackDamage: 1
+        attackSpeed: 5
+    events:
+      attack:
+        script:
+          name: builderslab:armor_stand_editor
+  sickle:
+    display_name: display-name-sickle
+    permission: builderslab.items.sickle
+    lore:
+    - lore-sickle
+    resource:
+      material: WOODEN_SWORD
+      generate: true
+      texture: item/sickle
+    durability:
+      max_custom_durability: 250
+    attribute_modifiers:
+      mainhand:
+        attackDamage: 1
+        attackSpeed: 5
+    events:
+      block_break:
+        script:
+          name: builderslab:sickle
+scripts:
+  block_punch:
+    path: scripts/block_punch.jspp
+  rotate_block:
+    path: scripts/rotate_block.jspp
+  random_block_placer:
+    path: scripts/random_block_placer.jspp
+  block_replacer:
+    path: scripts/block_replacer.jspp
+  armor_stand_editor:
+    path: scripts/armor_stand_editor.jspp
+  sickle:
+    path: scripts/sickle.jspp

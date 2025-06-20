@@ -1,0 +1,177 @@
+info:
+  namespace: builderslab
+equipments:
+  skeleton_crown:
+    type: armor
+    layer_1: armor/skeleton_crown/layer_1
+    layer_2: armor/skeleton_crown/layer_2
+recipes:
+  crafting_table:
+    enriched_bone_meal:
+      permission: builderslab.items.enriched_bone_meal
+      enabled: true
+      pattern:
+      - XWX
+      - RBF
+      - XSX
+      ingredients:
+        W: WHEAT
+        F: WARPED_FUNGUS
+        S: SUGAR_CANE
+        R: RED_MUSHROOM
+        B: BONE_MEAL
+      result:
+        item: builderslab:enriched_bone_meal
+        amount: 1
+items:
+  hello_world_stick:
+    display_name: display-name-hello_world_stick
+    permission: builderslab.items.hello_world_stick
+    lore:
+    - lore-hello_world_stick
+    resource:
+      material: STICK
+      generate: true
+      texture: item/hello_world_stick
+    max_stack_size: 1
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 20
+    events:
+      interact:
+        right:
+          script:
+            name: builderslab:hello_world
+  skeleton_crown:
+    name: display-name-skeleton_crown
+    permission: builderslab.items.skeleton_crown
+    lore:
+    - lore-1-skeleton_crown
+    - lore-2-skeleton_crown
+    - lore-3-skeleton_crown
+    resource:
+      material: GOLDEN_HELMET
+      generate: true
+      texture: item/skeleton_crown
+    durability:
+      max_durability: 165
+    equipment:
+      id: builderslab:skeleton_crown
+      slot_attribute_modifiers:
+        armor: 2.5
+    events:
+      interact:
+        right:
+          script:
+            name: builderslab:skeleton_totem
+        right_shift:
+          script:
+            name: builderslab:skeleton_totem
+  slime_egg:
+    display_name: Slime egg
+    permission: builderslab.items.slime_egg
+    lore:
+    - '&7Click to summon a slime'
+    resource:
+      material: SNOWBALL
+      generate: true
+      texture: item/slime_egg
+    events:
+      item_hit_ground:
+        script:
+          name: builderslab:slime_spawner
+  experience_book:
+    display_name: display-name-experience_book
+    permission: builderslab.items.experience_book
+    lore:
+    - lore-1-experience_book
+    - lore-2-experience_book
+    resource:
+      material: ENCHANTED_BOOK
+      generate: true
+      texture: item/experience_book
+    events:
+      interact:
+        right:
+          script:
+            name: builderslab:exp_storer
+        right_shift:
+          script:
+            name: builderslab:exp_storer
+    auto_update:
+      enabled: false
+  experience_book_full:
+    display_name: display-name-experience_book
+    permission: builderslab.items.experience_book_full
+    resource:
+      material: ENCHANTED_BOOK
+      generate: true
+      texture: item/experience_book_full
+  mineralized_pile:
+    display_name: Mineralized pile
+    permission: builderslab.items.mineralized_pile
+    lore:
+    - lore-mineralized_pile
+    resource:
+      material: IRON_NUGGET
+      generate: true
+      texture: item/mineralized_pile
+    events:
+      drop:
+        script:
+          name: builderslab:mineralized_pile
+  enriched_bone_meal:
+    display_name: display-name-enriched_bone_meal
+    permission: builderslab.items.enriched_bone_meal
+    lore:
+    - lore-enriched_bone_meal
+    resource:
+      material: BONE_MEAL
+      generate: true
+      texture: item/enriched_bone_meal
+    events:
+      interact:
+        right:
+          script:
+            name: builderslab:enriched_bone_meal
+loots:
+  blocks:
+    mineralized_pile:
+      type: DIRT
+      items:
+        mineralized_pile:
+          item: builderslab:mineralized_pile
+          min_amount: 1
+          max_amount: 1
+          chance: 3
+  mobs:
+    slime_egg:
+      type: SLIME
+      items:
+        slime_egg:
+          item: builderslab:slime_egg
+          min_amount: 1
+          max_amount: 1
+          chance: 3
+    skeleton_crown:
+      type: SKELETON
+      items:
+        skeleton_crown:
+          item: builderslab:skeleton_crown
+          min_amount: 1
+          max_amount: 1
+          chance: 3
+scripts:
+  hello_world:
+    path: scripts/hello_world.jspp
+  skeleton_totem:
+    path: scripts/skeleton_totem.jspp
+  slime_spawner:
+    path: scripts/slime_spawner.jspp
+  exp_storer:
+    path: scripts/exp_storer.jspp
+  mineralized_pile:
+    path: scripts/mineralized_pile.jspp
+  enriched_bone_meal:
+    path: scripts/enriched_bone_meal.jspp

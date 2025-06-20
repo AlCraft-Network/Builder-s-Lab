@@ -1,0 +1,66 @@
+import "java.util.ArrayList";
+import "java.util.List";
+import "org.bukkit.Particle";
+import "org.bukkit.event.player.PlayerInteractEvent";
+import "org.bukkit.NamespacedKey";
+import "org.bukkit.persistence.PersistentDataType";
+
+int toEXPPoints(int level) {
+    if (level <= 16) return level * level + 6 * level;
+    if (level <= 31) return (int) (2.5 * level * level - 40.5 * level + 360);
+    return (int) (4.5 * level * level - 162.5 * level + 2220);
+}
+
+int toNextLevel(int level) {
+    if (level <= 15) return 2 * level + 7;
+    if (level <= 30) return 5 * level - 38;
+    return 9 * level - 158;
+}
+
+int getStoredExp(ItemStack itemStack, NamespacedKey key) {
+    var container = itemStack.getItemMeta().getPersistentDataContainer();
+    return container.has(key, PersistentDataType.INTEGER) ? container.get(key, PersistentDataType.INTEGER) : 0;
+}
+
+void updateMeta(ItemStack itemStack, int exp, NamespacedKey key, String model) {
+    var meta = itemStack.getItemMeta();
+    List<String> newLore = new ArrayList<>(meta.getLore().subList(0, 2));
+    if (exp > 0) {
+        newLore.add("§fEXP:§a " + exp);
+        meta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, exp);
+    } else {
+        meta.getPersistentDataContainer().remove(key);
+    }
+    meta.setLore(newLore);
+    meta.setCustomModelData(customStack(model).getItemStack().getItemMeta().getCustomModelData());
+    itemStack.setItemMeta(meta);
+}
+
+if ($event instanceof PlayerInteractEvent interactEvent) {
+    NamespacedKey expKey = new NamespacedKey($customStack.getNamespace(), "stored_exp");
+    var clickedBlock = interactEvent.getClickedBlock();
+    if (clickedBlock != null && clickedBlock.getType() == Material.BOOKSHELF) {
+        int storedExp = getStoredExp($itemStack, expKey);
+        if (storedExp > 0) {
+            $player.giveExp(storedExp);
+
+            updateMeta($itemStack, 0, expKey, $customStack.getNamespacedID());
+            $player.getWorld().spawnParticle(Particle.ENCHANT, $player.getLocation().add(0, 1, 0), 20, 0.5, 0.5, 0.5, 0.1);
+        } else {
+            msg($player, "<red>This book has no stored experience.</red>", true);
+        }
+    } else {
+        int level = $player.getLevel();
+        int playerExp = toEXPPoints(level) + (int) ($player.getExp() * toNextLevel(level));
+        int expToStore = Math.min(playerExp, toNextLevel(level - 1));
+
+        if (expToStore > 0) {
+            $player.giveExp(-expToStore);
+
+            int storedExp = getStoredExp($itemStack, expKey)+expToStore;
+            updateMeta($itemStack, storedExp, expKey, $customStack.getNamespacedID()+"_full");
+        } else {
+            msg($player, "<red>You don't have enough experience to store.</red>", true);
+        }
+    }
+}

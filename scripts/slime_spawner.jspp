@@ -1,0 +1,13 @@
+import "org.bukkit.Location";
+import "org.bukkit.block.Block";
+import "org.bukkit.entity.EntityType";
+import "org.bukkit.event.entity.ProjectileHitEvent";
+
+if ($event instanceof ProjectileHitEvent hitEvent) { 
+    Block clickedBlock = hitEvent.getHitBlock().getRelative(hitEvent.getHitBlockFace());
+    if (clickedBlock != null) {
+        Location location = clickedBlock.getLocation().add(0.5, 0.0, 0.5);
+        clickedBlock.getWorld().spawnEntity(location, EntityType.SLIME);
+        $itemStack.setAmount($itemStack.getAmount()-1);
+    }
+}
