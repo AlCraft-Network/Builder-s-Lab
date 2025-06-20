@@ -9,6 +9,27 @@ import "org.bukkit.entity.EntityType";
 import "org.bukkit.entity.Skeleton";
 import "org.bukkit.event.player.PlayerInteractEvent";
 
+import "com.sk89q.worldguard.LocalPlayer";
+import "com.sk89q.worldguard.protection.regions.RegionContainer";
+import "com.sk89q.worldguard.protection.regions.RegionQuery";
+import "com.sk89q.worldguard.WorldGuard";
+import "com.sk89q.worldguard.protection.flags.Flags";
+import "com.sk89q.worldguard.bukkit.WorldGuardPlugin";
+import "com.sk89q.worldedit.bukkit.BukkitAdapter";
+import "com.sk89q.worldguard.session.SessionManager";
+
+boolean canBuild(Player player, Block block) {
+    Location loc = block.getLocation();
+    LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
+    RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+    SessionManager sessionManager = WorldGuard.getInstance().getPlatform().getSessionManager();
+    RegionQuery query = container.createQuery();
+    if (!sessionManager.hasBypass(localPlayer,  BukkitAdapter.adapt(loc.getWorld()))) {
+        return query.testBuild(BukkitAdapter.adapt(loc), localPlayer);
+    }
+    return true;
+}
+
 void breakBlock(Block block) {
     Location loc = block.getLocation();
     loc.getWorld().spawnParticle(Particle.ITEM, loc.add(0.5,0.5,0.5), 16, 0.2, 0.2, 0.2, 0.1, newStack(block.getType()));
@@ -62,7 +83,7 @@ TotemBlock[][] validTotems = {
 
 if ($event instanceof PlayerInteractEvent interactEvent) {
     Block clickedBlock = interactEvent.getClickedBlock();
-    if (clickedBlock == null) return;
+    if (clickedBlock == null || !canBuild($player, clickedBlock)) return;
     Location loc = clickedBlock.getLocation();
 
     boolean isValidTotem = true;

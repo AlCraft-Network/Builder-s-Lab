@@ -1,10 +1,33 @@
 import "java.util.List";
 import "java.util.Collection";
+import "org.bukkit.Location";
+import "org.bukkit.block.Block";
 import "org.bukkit.entity.Entity";
 import "org.bukkit.entity.ItemDisplay";
 import "org.bukkit.attribute.Attribute";
 import "org.bukkit.util.BlockIterator";
 import "org.bukkit.event.player.PlayerInteractEvent";
+
+import "com.sk89q.worldguard.LocalPlayer";
+import "com.sk89q.worldguard.protection.regions.RegionContainer";
+import "com.sk89q.worldguard.protection.regions.RegionQuery";
+import "com.sk89q.worldguard.WorldGuard";
+import "com.sk89q.worldguard.protection.flags.Flags";
+import "com.sk89q.worldguard.bukkit.WorldGuardPlugin";
+import "com.sk89q.worldedit.bukkit.BukkitAdapter";
+import "com.sk89q.worldguard.session.SessionManager";
+
+boolean canBuild(Player player, Block block) {
+    Location loc = block.getLocation();
+    LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
+    RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+    SessionManager sessionManager = WorldGuard.getInstance().getPlatform().getSessionManager();
+    RegionQuery query = container.createQuery();
+    if (!sessionManager.hasBypass(localPlayer,  BukkitAdapter.adapt(loc.getWorld()))) {
+        return query.testBuild(BukkitAdapter.adapt(loc), localPlayer);
+    }
+    return true;
+}
 
 CustomFurniture getTargetFurniture(Player $player, int range) {
     BlockIterator iterator = new BlockIterator($player.getEyeLocation(), 0, range);
@@ -20,7 +43,7 @@ CustomFurniture getTargetFurniture(Player $player, int range) {
 if ($event instanceof PlayerInteractEvent interactEvent) { 
     var clickedBlock = interactEvent.getClickedBlock();
     var handItem = $player.getInventory().getItemInMainHand();
-    if (!clickedBlock.getType().name().contains("HANGING_SIGN") || handItem.getType() == Material.AIR) return;
+    if (!clickedBlock.getType().name().contains("HANGING_SIGN") || handItem.getType() == Material.AIR || !canBuild($player, clickedBlock)) return;
     var furniture = CustomFurniture.byAlreadySpawned(clickedBlock);
     var itemDisplays = furniture.getEntity().getPassengers().stream().map(e -> (ItemDisplay) e).toList();
 

@@ -2,11 +2,33 @@ import "org.bukkit.Material";
 import "org.bukkit.block.Block";
 import "org.bukkit.event.block.BlockBreakEvent";
 import "org.bukkit.Particle";
+import "org.bukkit.Location";
 import "org.bukkit.Sound";
 import "java.util.Collection";
 import "java.util.HashMap";
 import "org.bukkit.GameMode";
 import "org.bukkit.inventory.meta.Damageable";
+
+import "com.sk89q.worldguard.LocalPlayer";
+import "com.sk89q.worldguard.protection.regions.RegionContainer";
+import "com.sk89q.worldguard.protection.regions.RegionQuery";
+import "com.sk89q.worldguard.WorldGuard";
+import "com.sk89q.worldguard.protection.flags.Flags";
+import "com.sk89q.worldguard.bukkit.WorldGuardPlugin";
+import "com.sk89q.worldedit.bukkit.BukkitAdapter";
+import "com.sk89q.worldguard.session.SessionManager";
+
+boolean canBuild(Player player, Block block) {
+    Location loc = block.getLocation();
+    LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
+    RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+    SessionManager sessionManager = WorldGuard.getInstance().getPlatform().getSessionManager();
+    RegionQuery query = container.createQuery();
+    if (!sessionManager.hasBypass(localPlayer,  BukkitAdapter.adapt(loc.getWorld()))) {
+        return query.testBuild(BukkitAdapter.adapt(loc), localPlayer);
+    }
+    return true;
+}
 
 void applyItemDamage(ItemStack item, CustomStack customStack, Player player) {
     var meta = (Damageable) item.getItemMeta();
@@ -42,7 +64,7 @@ if ($event instanceof BlockBreakEvent breakEvent) {
     for (int x = -radius; x <= radius; x++) {
         for (int z = -radius; z <= radius; z++) {
             Block nearby = block.getRelative(x, 0, z);
-            if (isCrop(nearby.getType())) {
+            if (isCrop(nearby.getType()) && canBuild($player, nearby)) {
                 Collection<ItemStack> drops = nearby.getDrops();
                 nearby.setType(Material.AIR);
 

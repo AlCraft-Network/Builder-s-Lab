@@ -3,12 +3,35 @@ import "org.bukkit.Axis";
 import "org.bukkit.Particle";
 import "org.bukkit.Sound";
 import "org.bukkit.GameMode";
+import "org.bukkit.Location";
+import "org.bukkit.block.Block";
 import "org.bukkit.block.data.Directional";
 import "org.bukkit.block.data.Rotatable";
 import "org.bukkit.block.data.Orientable";
 import "org.bukkit.event.player.PlayerInteractEvent";
 import "org.bukkit.block.BlockFace";
 import "org.bukkit.inventory.meta.Damageable";
+
+import "com.sk89q.worldguard.LocalPlayer";
+import "com.sk89q.worldguard.protection.regions.RegionContainer";
+import "com.sk89q.worldguard.protection.regions.RegionQuery";
+import "com.sk89q.worldguard.WorldGuard";
+import "com.sk89q.worldguard.protection.flags.Flags";
+import "com.sk89q.worldguard.bukkit.WorldGuardPlugin";
+import "com.sk89q.worldedit.bukkit.BukkitAdapter";
+import "com.sk89q.worldguard.session.SessionManager";
+
+boolean canBuild(Player player, Block block) {
+    Location loc = block.getLocation();
+    LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
+    RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+    SessionManager sessionManager = WorldGuard.getInstance().getPlatform().getSessionManager();
+    RegionQuery query = container.createQuery();
+    if (!sessionManager.hasBypass(localPlayer,  BukkitAdapter.adapt(loc.getWorld()))) {
+        return query.testBuild(BukkitAdapter.adapt(loc), localPlayer);
+    }
+    return true;
+}
 
 void applyItemDamage(ItemStack item, CustomStack customStack, Player player) {
     var meta = (Damageable) item.getItemMeta();
@@ -29,7 +52,7 @@ void applyItemDamage(ItemStack item, CustomStack customStack, Player player) {
 cancelEvent();
 if ($event instanceof PlayerInteractEvent interactEvent) {
     var clickedBlock = interactEvent.getClickedBlock();
-    if (clickedBlock != null && !clickedBlock.getType().name().endsWith("_TORCH")) {
+    if (clickedBlock != null && !clickedBlock.getType().name().endsWith("_TORCH") && canBuild($player, clickedBlock)) {
 
         List<BlockFace> FACES = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
         List<BlockFace> ROTATIONS = List.of(
