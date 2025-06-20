@@ -1,0 +1,52 @@
+name: Build Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag name (e.g. v1.0.0)'
+        required: true
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout main branch
+      uses: actions/checkout@v4
+      with:
+        ref: main
+        path: main-source
+
+    - name: Checkout worldguard branch
+      uses: actions/checkout@v4
+      with:
+        ref: worldguard
+        path: worldguard-source
+
+    - name: Prepare builderslab_[tag].zip
+      run: |
+        mkdir -p zip-build/main/builderslab
+        cp -r main-source/* zip-build/main/builderslab/
+        cd zip-build/main
+        zip -r ../../builderslab_${{ github.event.inputs.tag }}.zip builderslab
+        cd ../..
+
+    - name: Prepare builderslab-worldguard_[tag].zip
+      run: |
+        mkdir -p zip-build/worldguard/builderslab
+        cp -r worldguard-source/* zip-build/worldguard/builderslab/
+        cd zip-build/worldguard
+        zip -r ../../builderslab-worldguard_${{ github.event.inputs.tag }}.zip builderslab
+        cd ../..
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.event.inputs.tag }}
+        name: Release ${{ github.event.inputs.tag }}
+        files: |
+          builderslab_${{ github.event.inputs.tag }}.zip
+          builderslab-worldguard_${{ github.event.inputs.tag }}.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
