@@ -18,8 +18,9 @@ void breakBlock(Block block) {
 
 void summonMob(Player player, Location loc) {
     Skeleton skeleton = (Skeleton) loc.getWorld().spawnEntity(loc, EntityType.SKELETON);
-    skeleton.getEquipment().setHelmet(customStack("test:skeleton_crown").getItemStack());
-    skeleton.getEquipment().setChestplate(customStack("test:experience_book").getItemStack());
+    skeleton.getEquipment().setHelmet(customStack("builderslab:skeleton_crown").getItemStack());
+    skeleton.getEquipment().setHelmetDropChance(0.0f);
+    skeleton.getEquipment().setChestplate(customStack("builderslab:experience_book").getItemStack());
     skeleton.getEquipment().setChestplateDropChance(1.0f);
     skeleton.getAttribute(Attribute.MAX_HEALTH).setBaseValue(200.0);
     skeleton.setHealth(200.0);
