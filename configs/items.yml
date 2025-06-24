@@ -137,8 +137,24 @@ items:
             name: builderslab:enriched_bone_meal
 loots:
   blocks:
-    mineralized_pile:
-      type: DIRT
+    mineralized_pile_grass:
+      type: GRASS_BLOCK
+      items:
+        mineralized_pile:
+          item: builderslab:mineralized_pile
+          min_amount: 1
+          max_amount: 1
+          chance: 3
+    mineralized_pile_podzol:
+      type: PODZOL
+      items:
+        mineralized_pile:
+          item: builderslab:mineralized_pile
+          min_amount: 1
+          max_amount: 1
+          chance: 3
+    mineralized_pile_mycelium:
+      type: MYCELIUM
       items:
         mineralized_pile:
           item: builderslab:mineralized_pile
