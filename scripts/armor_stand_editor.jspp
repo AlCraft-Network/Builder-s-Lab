@@ -6,16 +6,12 @@ import "org.bukkit.event.entity.EntityDamageByEntityEvent";
 import "org.bukkit.util.EulerAngle";
 import "org.bukkit.inventory.meta.Damageable";
 
-void applyItemDamage(ItemStack item, CustomStack customStack, Player player) {
+void decrementDurability(ItemStack item, CustomStack customStack, Player player) {
     var meta = (Damageable) item.getItemMeta();
-    if (meta.getDamage() >= customStack.getMaxDurability()){
+    if (meta.getDamage() + 1 >= customStack.getMaxDurability()){
         playSound(player.getLocation(), "minecraft:entity.item.break");
         player.getWorld().spawnParticle(Particle.ITEM, player.getLocation().add(0, 1.0, 0), 15, 0.2, 0.2, 0.2, 0.1, item);
-        if (item.equals(player.getInventory().getItemInMainHand())) {
-            player.getInventory().setItemInMainHand(null);
-        } else if (item.equals(player.getInventory().getItemInOffHand())) {
-            player.getInventory().setItemInOffHand(null);
-        }
+        item.setAmount(0);
     } else {
         meta.setDamage(meta.getDamage() + 1);
         item.setItemMeta(meta);
@@ -137,7 +133,7 @@ if ($event instanceof EntityDamageByEntityEvent entityEvent && entityEvent.getEn
 
     playParticle(armorStand.getLocation().add(0,1,0), "minecraft:sweep_attack", 1);
     playSound(armorStand.getLocation(), "minecraft:entity.player.attack.sweep");
-    if ($player.getGameMode() != GameMode.CREATIVE) applyItemDamage($itemStack, $customStack, $player);
+    if ($player.getGameMode() != GameMode.CREATIVE) decrementDurability($itemStack, $customStack, $player);
 
     int poseIndex = getDataInt(armorStand, $customStack.getNamespace(), "pose_index", 0);
 

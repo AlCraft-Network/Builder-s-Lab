@@ -9,16 +9,12 @@ import "org.bukkit.event.player.PlayerInteractEvent";
 import "org.bukkit.block.BlockFace";
 import "org.bukkit.inventory.meta.Damageable";
 
-void applyItemDamage(ItemStack item, CustomStack customStack, Player player) {
+void decrementDurability(ItemStack item, CustomStack customStack, Player player) {
     var meta = (Damageable) item.getItemMeta();
-    if (meta.getDamage() >= customStack.getMaxDurability()){
+    if (meta.getDamage() + 1 >= customStack.getMaxDurability()){
         playSound(player.getLocation(), "minecraft:entity.item.break");
         player.getWorld().spawnParticle(Particle.ITEM, player.getLocation().add(0, 1.0, 0), 15, 0.2, 0.2, 0.2, 0.1, item);
-        if (item.equals(player.getInventory().getItemInMainHand())) {
-            player.getInventory().setItemInMainHand(null);
-        } else if (item.equals(player.getInventory().getItemInOffHand())) {
-            player.getInventory().setItemInOffHand(null);
-        }
+        item.setAmount(0);
     } else {
         meta.setDamage(meta.getDamage() + 1);
         item.setItemMeta(meta);
@@ -48,7 +44,7 @@ if ($event instanceof PlayerInteractEvent interactEvent) {
             default -> {}
         }
         clickedBlock.setBlockData(data);
-        if ($player.getGameMode() != GameMode.CREATIVE) applyItemDamage($itemStack, $customStack, $player);
+        if ($player.getGameMode() != GameMode.CREATIVE) decrementDurability($itemStack, $customStack, $player);
 
         var loc = clickedBlock.getLocation();
         loc.getWorld().spawnParticle(Particle.ITEM, loc.add(0.5,0.5,0.5), 6, 0.2, 0.2, 0.2, 0.1, newStack(clickedBlock.getType()));
