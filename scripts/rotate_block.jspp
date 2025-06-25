@@ -1,7 +1,6 @@
 import "java.util.List";
 import "org.bukkit.Axis";
 import "org.bukkit.Particle";
-import "org.bukkit.Sound";
 import "org.bukkit.GameMode";
 import "org.bukkit.block.data.Directional";
 import "org.bukkit.block.data.Rotatable";
@@ -13,7 +12,7 @@ import "org.bukkit.inventory.meta.Damageable";
 void applyItemDamage(ItemStack item, CustomStack customStack, Player player) {
     var meta = (Damageable) item.getItemMeta();
     if (meta.getDamage() >= customStack.getMaxDurability()){
-        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
+        playSound(player.getLocation(), "minecraft:entity.item.break");
         player.getWorld().spawnParticle(Particle.ITEM, player.getLocation().add(0, 1.0, 0), 15, 0.2, 0.2, 0.2, 0.1, item);
         if (item.equals(player.getInventory().getItemInMainHand())) {
             player.getInventory().setItemInMainHand(null);
@@ -53,6 +52,6 @@ if ($event instanceof PlayerInteractEvent interactEvent) {
 
         var loc = clickedBlock.getLocation();
         loc.getWorld().spawnParticle(Particle.ITEM, loc.add(0.5,0.5,0.5), 6, 0.2, 0.2, 0.2, 0.1, newStack(clickedBlock.getType()));
-        loc.getWorld().playSound(loc, clickedBlock.getBlockData().getSoundGroup().getBreakSound(), 1.0f, 1.0f);
+        playSound(loc, clickedBlock.getBlockData().getSoundGroup().getBreakSound().getKey().getKey());
     }
 }

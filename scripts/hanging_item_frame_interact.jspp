@@ -1,20 +1,5 @@
-import "java.util.List";
-import "java.util.Collection";
-import "org.bukkit.entity.Entity";
 import "org.bukkit.entity.ItemDisplay";
-import "org.bukkit.attribute.Attribute";
-import "org.bukkit.util.BlockIterator";
 import "org.bukkit.event.player.PlayerInteractEvent";
-
-CustomFurniture getTargetFurniture(Player $player, int range) {
-    BlockIterator iterator = new BlockIterator($player.getEyeLocation(), 0, range);
-    while(iterator.hasNext()){
-        var loc = iterator.next().getLocation();
-        CustomFurniture furniture = CustomFurniture.byAlreadySpawned(loc.getBlock());
-        if (furniture != null) return furniture;
-    }
-    return null;
-}
 
 // On interact furniture
 if ($event instanceof PlayerInteractEvent interactEvent) { 
@@ -35,7 +20,7 @@ if ($event instanceof PlayerInteractEvent interactEvent) {
 // On break furniture
 } else {
     cancelEvent();
-    CustomFurniture furniture = getTargetFurniture($player, (int) $player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE).getValue());
+    CustomFurniture furniture = CustomFurniture.byAlreadySpawned(entityInFront($player));
     if (furniture == null) return;
 
     const loc = furniture.getEntity().getLocation();

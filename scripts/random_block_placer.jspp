@@ -3,7 +3,6 @@ import "java.util.Arrays";
 import "java.util.Objects";
 import "java.util.Random";
 import "org.bukkit.Particle";
-import "org.bukkit.Sound";
 import "org.bukkit.GameMode";
 import "org.bukkit.event.player.PlayerInteractEvent";
 import "org.bukkit.inventory.meta.Damageable";
@@ -11,7 +10,7 @@ import "org.bukkit.inventory.meta.Damageable";
 void applyItemDamage(ItemStack item, CustomStack customStack, Player player) {
     var meta = (Damageable) item.getItemMeta();
     if (meta.getDamage() >= customStack.getMaxDurability()){
-        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
+        playSound(player.getLocation(), "minecraft:entity.item.break");
         player.getWorld().spawnParticle(Particle.ITEM, player.getLocation().add(0, 1.0, 0), 15, 0.2, 0.2, 0.2, 0.1, item);
         if (item.equals(player.getInventory().getItemInMainHand())) {
             player.getInventory().setItemInMainHand(null);
@@ -35,7 +34,7 @@ if ($event instanceof PlayerInteractEvent interactEvent && interactEvent.hasBloc
     var newblock = clickedBlock.getRelative(interactEvent.getBlockFace());
     if (newblock.getType() != Material.AIR) return;
     placeBlock(newblock, randomBlock.getType());
-    $player.getWorld().playSound(newblock.getLocation(), newblock.getBlockData().getSoundGroup().getPlaceSound(), 1.0f, 1.0f);
+    playSound(newblock.getLocation(), newblock.getBlockData().getSoundGroup().getBreakSound().getKey().getKey());
     if ($player.getGameMode() != GameMode.CREATIVE) {
         randomBlock.setAmount(randomBlock.getAmount() - 1);
         applyItemDamage($itemStack, $customStack, $player);

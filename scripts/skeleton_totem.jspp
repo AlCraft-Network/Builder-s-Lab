@@ -1,6 +1,5 @@
 import "org.bukkit.Location";
 import "org.bukkit.Particle";
-import "org.bukkit.Sound";
 import "org.bukkit.attribute.Attribute";
 import "org.bukkit.block.Block";
 import "org.bukkit.block.data.Rotatable";
@@ -12,7 +11,7 @@ import "org.bukkit.event.player.PlayerInteractEvent";
 void breakBlock(Block block) {
     Location loc = block.getLocation();
     loc.getWorld().spawnParticle(Particle.ITEM, loc.add(0.5,0.5,0.5), 16, 0.2, 0.2, 0.2, 0.1, newStack(block.getType()));
-    loc.getWorld().playSound(loc, block.getBlockData().getSoundGroup().getBreakSound(), 1.0f, 1.0f);
+    playSound(loc, block.getBlockData().getSoundGroup().getBreakSound().getKey().getKey());
     removeBlock(block);
 }
 
@@ -25,8 +24,8 @@ void summonMob(Player player, Location loc) {
     skeleton.getAttribute(Attribute.MAX_HEALTH).setBaseValue(200.0);
     skeleton.setHealth(200.0);
     skeleton.getAttribute(Attribute.SCALE).setBaseValue(1.2);
-    loc.getWorld().spawnParticle(Particle.LARGE_SMOKE, loc, 26, 0.2, 0.2, 0.2, 0.1);
-    loc.getWorld().playSound(loc, Sound.ENTITY_EVOKER_PREPARE_SUMMON, 1.0f, 1.0f);
+    playParticle(loc, "minecraft:large_smoke", 26, 0.2, 0.2, 0.2, 0.1);
+    playSound(loc, "minecraft:entity.evoker.prepare_summon");
     msg(player, "You summoned a <red>Skeleton</red> king!", true);
 }
 
