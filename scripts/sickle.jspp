@@ -30,16 +30,12 @@ boolean canBuild(Player player, Block block) {
     return true;
 }
 
-void applyItemDamage(ItemStack item, CustomStack customStack, Player player) {
+void decrementDurability(ItemStack item, CustomStack customStack, Player player) {
     var meta = (Damageable) item.getItemMeta();
-    if (meta.getDamage() >= customStack.getMaxDurability()){
+    if (meta.getDamage() + 1 >= customStack.getMaxDurability()){
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
         player.getWorld().spawnParticle(Particle.ITEM, player.getLocation().add(0, 1.0, 0), 15, 0.2, 0.2, 0.2, 0.1, item);
-        if (item.equals(player.getInventory().getItemInMainHand())) {
-            player.getInventory().setItemInMainHand(null);
-        } else if (item.equals(player.getInventory().getItemInOffHand())) {
-            player.getInventory().setItemInOffHand(null);
-        }
+        item.setAmount(0);
     } else {
         meta.setDamage(meta.getDamage() + 1);
         item.setItemMeta(meta);
@@ -76,5 +72,5 @@ if ($event instanceof BlockBreakEvent breakEvent) {
         }
     }
 
-    if ($player.getGameMode() != GameMode.CREATIVE) applyItemDamage($itemStack, $customStack, $player);
+    if ($player.getGameMode() != GameMode.CREATIVE) decrementDurability($itemStack, $customStack, $player);
 }
