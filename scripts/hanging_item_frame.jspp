@@ -6,7 +6,6 @@ import "org.bukkit.block.data.Rotatable";
 import "org.bukkit.block.BlockFace";
 import "org.bukkit.entity.ItemDisplay";
 import "org.bukkit.util.Transformation";
-import "dev.lone.itemsadder.api.CustomFurniture";
 
 float getYawFromRotation(BlockFace face) {
     return switch (face) {

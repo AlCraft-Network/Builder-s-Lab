@@ -36,7 +36,7 @@ if ($event instanceof BlockBreakEvent breakEvent) {
     for (int x = -radius; x <= radius; x++) {
         for (int z = -radius; z <= radius; z++) {
             var nearby = block.getRelative(x, 0, z);
-            if (isCrop(nearby.getType())) {
+            if (isCrop(nearby.getType()) && CustomCrop.byAlreadyPlaced(nearby) == null) {
                 Collection<ItemStack> drops = nearby.getDrops();
                 nearby.setType(Material.AIR);
 

@@ -221,6 +221,10 @@ items:
       mainhand:
         attackDamage: 1
         attackSpeed: 5
+    events_settings:
+      cooldown:
+        ticks: 10
+        indicator: VANILLA
     events:
       block_break:
         script:

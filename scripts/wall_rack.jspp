@@ -3,7 +3,6 @@ import "org.joml.Vector3f";
 import "org.bukkit.util.Transformation";
 import "org.bukkit.event.player.PlayerInteractEvent";
 import "org.bukkit.entity.ItemDisplay";
-import "dev.lone.itemsadder.api.CustomFurniture";
 
 void getBackItem(Player player, ItemStack handItem, ItemDisplay displayEntity) {
     ItemStack item = displayEntity.getItemStack();

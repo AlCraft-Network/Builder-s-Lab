@@ -18,16 +18,29 @@ void decrementDurability(ItemStack item, CustomStack customStack, Player player)
 cancelEvent();
 if ($event instanceof PlayerInteractEvent interactEvent && interactEvent.hasBlock()) {
     var clickedBlock = interactEvent.getClickedBlock();
-    if (clickedBlock.getType().isBlock() && clickedBlock.getType().getHardness() >= 0) {
-        var secondaryItem = $player.getInventory().getItemInOffHand();
-        if (secondaryItem.getType() != Material.AIR && secondaryItem.getType().isBlock()) {
-            breakBlockNaturally($player, clickedBlock);
-            clickedBlock.setType(secondaryItem.getType());
-            playSound(clickedBlock.getLocation(), clickedBlock.getBlockData().getSoundGroup().getBreakSound().getKey().getKey());
-            if ($player.getGameMode() != GameMode.CREATIVE) {
-                secondaryItem.setAmount(secondaryItem.getAmount() - 1);
-                decrementDurability($itemStack, $customStack, $player);
-            }
-        }
+    if (!clickedBlock.getType().isBlock() || clickedBlock.getType().getHardness() < 0) return;
+
+    var secondaryItem = $player.getInventory().getItemInOffHand();
+    var custom = CustomBlock.byItemStack(secondaryItem);
+    if (secondaryItem.getType() == Material.AIR || !(secondaryItem.getType().isBlock() || custom != null)) return;
+
+    if (isCustom(clickedBlock)) {
+        var customBlock = customBlock(clickedBlock);
+        clickedBlock.getLocation().getWorld().dropItemNaturally(clickedBlock.getLocation(), customBlock.getItemStack());
+        customBlock.playBreakSound();
+    } else {
+        breakBlockNaturally($player, clickedBlock);
+        playSound(clickedBlock.getLocation(), clickedBlock.getBlockData().getSoundGroup().getBreakSound().getKey().getKey());
     }
+;
+    if (custom != null) {
+        custom.place(clickedBlock.getLocation());
+    } else if (secondaryItem.getType().isBlock()) {
+        placeBlock(clickedBlock, secondaryItem.getType());
+    }
+
+    if ($player.getGameMode() != GameMode.CREATIVE) {
+        secondaryItem.setAmount(secondaryItem.getAmount() - 1);
+        decrementDurability($itemStack, $customStack, $player);
+     }
 }
