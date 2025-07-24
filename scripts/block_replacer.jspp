@@ -18,7 +18,7 @@ void decrementDurability(ItemStack item, CustomStack customStack, Player player)
 cancelEvent();
 if ($event instanceof PlayerInteractEvent interactEvent && interactEvent.hasBlock()) {
     var clickedBlock = interactEvent.getClickedBlock();
-    if (!clickedBlock.getType().isBlock() || clickedBlock.getType().getHardness() < 0) return;
+    if (!clickedBlock.getType().isBlock() || clickedBlock.getType().getHardness() < 0 || clickedBlock.getType().getHardness() >= 50.0) return;
 
     var secondaryItem = $player.getInventory().getItemInOffHand();
     var custom = CustomBlock.byItemStack(secondaryItem);
