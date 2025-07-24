@@ -1,23 +1,15 @@
-import "java.util.Collection";
-import "java.util.List";
-import "java.util.Optional";
 import "org.joml.Quaternionf";
 import "org.joml.Vector3f";
+import "org.bukkit.util.Transformation";
 import "org.bukkit.event.player.PlayerInteractEvent";
 import "org.bukkit.block.Block";
-import "org.bukkit.entity.Entity";
 import "org.bukkit.entity.ItemDisplay";
-import "org.bukkit.util.Transformation";
-import "org.bukkit.attribute.Attribute";
-import "org.bukkit.util.BlockIterator";
 import "org.bukkit.Location";
-import "dev.lone.itemsadder.api.CustomFurniture";
 
 import "com.sk89q.worldguard.LocalPlayer";
 import "com.sk89q.worldguard.protection.regions.RegionContainer";
 import "com.sk89q.worldguard.protection.regions.RegionQuery";
 import "com.sk89q.worldguard.WorldGuard";
-import "com.sk89q.worldguard.protection.flags.Flags";
 import "com.sk89q.worldguard.bukkit.WorldGuardPlugin";
 import "com.sk89q.worldedit.bukkit.BukkitAdapter";
 import "com.sk89q.worldguard.session.SessionManager";
@@ -45,20 +37,10 @@ void getBackItem(Player player, ItemStack handItem, ItemDisplay displayEntity) {
     }
 }
 
-CustomFurniture getTargetFurniture(Player $player, int range) {
-    BlockIterator iterator = new BlockIterator($player.getEyeLocation(), 0, range);
-    while(iterator.hasNext()){
-        var loc = iterator.next().getLocation();
-        CustomFurniture furniture = CustomFurniture.byAlreadySpawned(loc.getBlock());
-        if (furniture != null) return furniture;
-    }
-    return null;
-}
-
 // On interact furniture
 if ($event instanceof PlayerInteractEvent) { 
     cancelEvent();
-    CustomFurniture furniture = getTargetFurniture($player, (int) $player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE).getValue());
+    CustomFurniture furniture = CustomFurniture.byAlreadySpawned(entityInFront($player));
     if (furniture == null || !canBuild($player, block(furniture.getEntity().getLocation()))) return;
 
     var rack = furniture.getEntity();
@@ -91,7 +73,7 @@ if ($event instanceof PlayerInteractEvent) {
     }
 // On break furniture
 } else {
-    CustomFurniture furniture = getTargetFurniture($player, (int) $player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE).getValue());
+    CustomFurniture furniture = CustomFurniture.byAlreadySpawned(entityInFront($player));
     if (furniture == null) return;
 
     const loc = furniture.getEntity().getLocation();

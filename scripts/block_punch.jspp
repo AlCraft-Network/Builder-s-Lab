@@ -1,9 +1,8 @@
 import "org.bukkit.Particle";
-import "org.bukkit.Sound";
+import "org.bukkit.Material";
 import "org.bukkit.block.Block";
 import "org.bukkit.Location";
 import "org.bukkit.GameMode";
-import "org.bukkit.block.BlockFace";
 import "org.bukkit.block.PistonMoveReaction";
 import "org.bukkit.event.player.PlayerInteractEvent";
 import "org.bukkit.inventory.meta.Damageable";
@@ -12,7 +11,6 @@ import "com.sk89q.worldguard.LocalPlayer";
 import "com.sk89q.worldguard.protection.regions.RegionContainer";
 import "com.sk89q.worldguard.protection.regions.RegionQuery";
 import "com.sk89q.worldguard.WorldGuard";
-import "com.sk89q.worldguard.protection.flags.Flags";
 import "com.sk89q.worldguard.bukkit.WorldGuardPlugin";
 import "com.sk89q.worldedit.bukkit.BukkitAdapter";
 import "com.sk89q.worldguard.session.SessionManager";
@@ -32,7 +30,7 @@ boolean canBuild(Player player, Block block) {
 void decrementDurability(ItemStack item, CustomStack customStack, Player player) {
     var meta = (Damageable) item.getItemMeta();
     if (meta.getDamage() + 1 >= customStack.getMaxDurability()){
-        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
+        playSound(player.getLocation(), "minecraft:entity.item.break");
         player.getWorld().spawnParticle(Particle.ITEM, player.getLocation().add(0, 1.0, 0), 15, 0.2, 0.2, 0.2, 0.1, item);
         item.setAmount(0);
     } else {
@@ -43,25 +41,35 @@ void decrementDurability(ItemStack item, CustomStack customStack, Player player)
 
 if ($event instanceof PlayerInteractEvent interactEvent && interactEvent.hasBlock()) {
     var clickedBlock = interactEvent.getClickedBlock();
-    if (clickedBlock.getPistonMoveReaction() == PistonMoveReaction.MOVE && canBuild($player, clickedBlock)) {
-        var loc = clickedBlock.getLocation();
-        loc.getWorld().spawnParticle(Particle.ITEM, loc.add(0.5,0.5,0.5), 16, 0.2, 0.2, 0.2, 0.1, newStack(clickedBlock.getType()));
-        loc.getWorld().playSound(loc, clickedBlock.getBlockData().getSoundGroup().getBreakSound(), 1.0f, 1.0f);
+    var loc = clickedBlock.getLocation();
 
-        switch (interactEvent.getBlockFace()) {
-            case UP -> loc.add(0.0, -1.0, 0.0);
-            case DOWN -> loc.add(0.0, 1.0, 0.0);
-            case EAST -> loc.add(-1.0, 0.0, 0.0);
-            case WEST -> loc.add(1.0, 0.0, 0.0);
-            case SOUTH -> loc.add(0.0, 0.0, -1.0);
-            default -> loc.add(0.0, 0.0, 1.0);
-        };
+    if (clickedBlock.getPistonMoveReaction() != PistonMoveReaction.MOVE || !canBuild($player, clickedBlock)) return;
 
-        var newBlock = block(loc);
-        if(newBlock.getType() == Material.AIR && canBuild($player, newBlock)) {
-            placeBlock(newBlock, clickedBlock.getType());
-            removeBlock(clickedBlock);
-            if ($player.getGameMode() != GameMode.CREATIVE) decrementDurability($itemStack, $customStack, $player);
-        }
+    switch (interactEvent.getBlockFace()) {
+        case UP -> loc.add(0.0, -1.0, 0.0);
+        case DOWN -> loc.add(0.0, 1.0, 0.0);
+        case EAST -> loc.add(-1.0, 0.0, 0.0);
+        case WEST -> loc.add(1.0, 0.0, 0.0);
+        case SOUTH -> loc.add(0.0, 0.0, -1.0);
+        default -> loc.add(0.0, 0.0, 1.0);
+    };
+
+    var newBlock = block(loc);
+    if ((newBlock.getType() != Material.AIR && newBlock.getType() != Material.LIGHT) || !canBuild($player, newBlock)) return;
+
+    if (isCustom(clickedBlock)) {
+        var custom = customBlock(clickedBlock);
+        delay(1, () => {
+            custom.playBreakParticles();
+            custom.playBreakSound();
+            custom.remove();
+            custom.place(loc);
+        });
+    } else {
+        loc.getWorld().spawnParticle(Particle.ITEM, clickedBlock.getLocation().add(0.5,0.5,0.5), 16, 0.2, 0.2, 0.2, 0.1, newStack(clickedBlock.getType()));
+        loc.getWorld().playSound(clickedBlock.getLocation(), clickedBlock.getBlockData().getSoundGroup().getBreakSound(), 1.0f, 1.0f);
+        placeBlock(newBlock, clickedBlock.getType());
+        removeBlock(clickedBlock);
     }
+    if ($player.getGameMode() != GameMode.CREATIVE) decrementDurability($itemStack, $customStack, $player);
 }

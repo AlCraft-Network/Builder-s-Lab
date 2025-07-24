@@ -1,5 +1,4 @@
 import "org.bukkit.Particle";
-import "org.bukkit.Sound";
 import "org.bukkit.GameMode";
 import "org.bukkit.Location";
 import "org.bukkit.block.Block";
@@ -10,7 +9,6 @@ import "com.sk89q.worldguard.LocalPlayer";
 import "com.sk89q.worldguard.protection.regions.RegionContainer";
 import "com.sk89q.worldguard.protection.regions.RegionQuery";
 import "com.sk89q.worldguard.WorldGuard";
-import "com.sk89q.worldguard.protection.flags.Flags";
 import "com.sk89q.worldguard.bukkit.WorldGuardPlugin";
 import "com.sk89q.worldedit.bukkit.BukkitAdapter";
 import "com.sk89q.worldguard.session.SessionManager";
@@ -30,7 +28,7 @@ boolean canBuild(Player player, Block block) {
 void decrementDurability(ItemStack item, CustomStack customStack, Player player) {
     var meta = (Damageable) item.getItemMeta();
     if (meta.getDamage() + 1 >= customStack.getMaxDurability()){
-        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
+        playSound(player.getLocation(), "minecraft:entity.item.break");
         player.getWorld().spawnParticle(Particle.ITEM, player.getLocation().add(0, 1.0, 0), 15, 0.2, 0.2, 0.2, 0.1, item);
         item.setAmount(0);
     } else {
@@ -42,16 +40,29 @@ void decrementDurability(ItemStack item, CustomStack customStack, Player player)
 cancelEvent();
 if ($event instanceof PlayerInteractEvent interactEvent && interactEvent.hasBlock()) {
     var clickedBlock = interactEvent.getClickedBlock();
-    if (clickedBlock.getType().isBlock() && clickedBlock.getType().getHardness() >= 0 && canBuild($player, clickedBlock)) {
-        var secondaryItem = $player.getInventory().getItemInOffHand();
-        if (secondaryItem.getType() != Material.AIR && secondaryItem.getType().isBlock()) {
-            clickedBlock.breakNaturally();
-            clickedBlock.setType(secondaryItem.getType());
-            $player.getWorld().playSound(clickedBlock.getLocation(), clickedBlock.getBlockData().getSoundGroup().getBreakSound(), 1.0f, 1.0f);
-            if ($player.getGameMode() != GameMode.CREATIVE) {
-                secondaryItem.setAmount(secondaryItem.getAmount() - 1);
-                decrementDurability($itemStack, $customStack, $player);
-            }
-        }
+    if (!clickedBlock.getType().isBlock() || clickedBlock.getType().getHardness() < 0 || clickedBlock.getType().getHardness() >= 50.0 || !canBuild($player, clickedBlock)) return;
+
+    var secondaryItem = $player.getInventory().getItemInOffHand();
+    var custom = CustomBlock.byItemStack(secondaryItem);
+    if (secondaryItem.getType() == Material.AIR || !(secondaryItem.getType().isBlock() || custom != null)) return;
+
+    if (isCustom(clickedBlock)) {
+        var customBlock = customBlock(clickedBlock);
+        clickedBlock.getLocation().getWorld().dropItemNaturally(clickedBlock.getLocation(), customBlock.getItemStack());
+        customBlock.playBreakSound();
+    } else {
+        breakBlockNaturally($player, clickedBlock);
+        playSound(clickedBlock.getLocation(), clickedBlock.getBlockData().getSoundGroup().getBreakSound().getKey().getKey());
     }
+;
+    if (custom != null) {
+        custom.place(clickedBlock.getLocation());
+    } else if (secondaryItem.getType().isBlock()) {
+        placeBlock(clickedBlock, secondaryItem.getType());
+    }
+
+    if ($player.getGameMode() != GameMode.CREATIVE) {
+        secondaryItem.setAmount(secondaryItem.getAmount() - 1);
+        decrementDurability($itemStack, $customStack, $player);
+     }
 }
