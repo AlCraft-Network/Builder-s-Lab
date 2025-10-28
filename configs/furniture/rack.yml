@@ -202,6 +202,18 @@ items:
       material: PAPER
       generate: false
       model_path: item/oak_rack
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      placed_furniture:
+        interact:
+          script:
+            name: rack
+        break:
+          script:
+            name: rack
   spruce_rack:
     display_name: display-name-spruce_rack
     variant_of: template_rack
@@ -209,6 +221,18 @@ items:
       material: PAPER
       generate: false
       model_path: item/spruce_rack
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      placed_furniture:
+        interact:
+          script:
+            name: rack
+        break:
+          script:
+            name: rack
   birch_rack:
     display_name: display-name-birch_rack
     variant_of: template_rack
@@ -216,6 +240,18 @@ items:
       material: PAPER
       generate: false
       model_path: item/birch_rack
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      placed_furniture:
+        interact:
+          script:
+            name: rack
+        break:
+          script:
+            name: rack
   jungle_rack:
     display_name: display-name-jungle_rack
     variant_of: template_rack
@@ -223,6 +259,18 @@ items:
       material: PAPER
       generate: false
       model_path: item/jungle_rack
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      placed_furniture:
+        interact:
+          script:
+            name: rack
+        break:
+          script:
+            name: rack
   acacia_rack:
     display_name: display-name-acacia_rack
     variant_of: template_rack
@@ -230,6 +278,18 @@ items:
       material: PAPER
       generate: false
       model_path: item/acacia_rack
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      placed_furniture:
+        interact:
+          script:
+            name: rack
+        break:
+          script:
+            name: rack
   dark_oak_rack:
     display_name: display-name-dark_oak_rack
     variant_of: template_rack
@@ -237,6 +297,18 @@ items:
       material: PAPER
       generate: false
       model_path: item/dark_oak_rack
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      placed_furniture:
+        interact:
+          script:
+            name: rack
+        break:
+          script:
+            name: rack
   mangrove_rack:
     display_name: display-name-mangrove_rack
     variant_of: template_rack
@@ -244,6 +316,18 @@ items:
       material: PAPER
       generate: false
       model_path: item/mangrove_rack
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      placed_furniture:
+        interact:
+          script:
+            name: rack
+        break:
+          script:
+            name: rack
   cherry_rack:
     display_name: display-name-cherry_rack
     variant_of: template_rack
@@ -251,6 +335,18 @@ items:
       material: PAPER
       generate: false
       model_path: item/cherry_rack
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      placed_furniture:
+        interact:
+          script:
+            name: rack
+        break:
+          script:
+            name: rack
   pale_oak_rack:
     display_name: display-name-pale_oak_rack
     variant_of: template_rack
@@ -258,6 +354,18 @@ items:
       material: PAPER
       generate: false
       model_path: item/pale_oak_rack
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      placed_furniture:
+        interact:
+          script:
+            name: rack
+        break:
+          script:
+            name: rack
   bamboo_rack:
     display_name: display-name-bamboo_rack
     variant_of: template_rack
@@ -265,6 +373,18 @@ items:
       material: PAPER
       generate: false
       model_path: item/bamboo_rack
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      placed_furniture:
+        interact:
+          script:
+            name: rack
+        break:
+          script:
+            name: rack
   crimson_rack:
     display_name: display-name-crimson_rack
     variant_of: template_rack
@@ -272,6 +392,18 @@ items:
       material: PAPER
       generate: false
       model_path: item/crimson_rack
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      placed_furniture:
+        interact:
+          script:
+            name: rack
+        break:
+          script:
+            name: rack
   warped_rack:
     display_name: display-name-warped_rack
     variant_of: template_rack
@@ -279,6 +411,18 @@ items:
       material: PAPER
       generate: false
       model_path: item/warped_rack
+    events_settings:
+      cooldown:
+        indicator: HIDDEN
+        ticks: 1
+    events:
+      placed_furniture:
+        interact:
+          script:
+            name: rack
+        break:
+          script:
+            name: rack
 scripts:
   rack:
     path: scripts/rack.jspp
