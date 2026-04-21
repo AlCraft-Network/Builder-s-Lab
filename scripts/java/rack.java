@@ -1,0 +1,93 @@
+package scripts.java;
+
+import java.util.Map;
+
+import org.bukkit.Location;
+import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Transformation;
+
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
+import dev.lone.itemsadder.api.CustomFurniture;
+import dev.lone.itemsadder.api.CustomStack;
+import dev.lone.itemsadder.api.scriptinginternal.ItemScript;
+
+import static dev.lone.itemsadder.api.scriptinginternal.PlayerUtils.*;
+
+public class rack extends ItemScript {
+    private void getBackItem(Player player, ItemStack handItem, ItemDisplay displayEntity) {
+        ItemStack item = displayEntity.getItemStack();
+
+        if (handItem.getType().isAir()) {
+            player.getInventory().setItemInMainHand(item);
+        } else {
+            Map<Integer, ItemStack> leftover = player.getInventory().addItem(item);
+            leftover.values().forEach(remaining -> player.getWorld().dropItemNaturally(player.getLocation(), remaining));
+        }
+    }
+
+    private void cancelEvent(Event event) {
+        try {
+            if (event instanceof Cancellable e) e.setCancelled(true);
+        } catch (Exception ignored) {}
+    }
+
+    @Override
+    public void handleEvent(Plugin plugin, Event event, Player player, CustomStack customStack, ItemStack vanillaItem) {
+        if (event instanceof PlayerInteractEvent) {
+            cancelEvent(event);
+
+            CustomFurniture furniture = CustomFurniture.byAlreadySpawned(entityInFront(player));
+            if (furniture == null) return;
+
+            var rack = furniture.getEntity();
+            var handItem = player.getInventory().getItemInMainHand();
+            var itemDisplays = rack.getPassengers();
+
+            if (!handItem.getType().isAir() && !handItem.getType().isBlock()) {
+                var itemToPlace = handItem.clone();
+                itemToPlace.setAmount(1);
+
+                handItem.setAmount(handItem.getAmount() - 1);
+
+                // Add item
+                if (itemDisplays.size() < 2) {
+                    var display = rack.getWorld().spawn(rack.getLocation(), ItemDisplay.class);
+                    display.setItemStack(itemToPlace);
+                    display.setTransformation(new Transformation(new Vector3f((itemDisplays.isEmpty() ? -0.15f : 0.15f), 0.55f, 0.0f), new Quaternionf().rotateY((float) Math.toRadians(22.5f)).rotateZ((float) Math.toRadians(135.0f)), new Vector3f(0.8f, 0.8f, 0.8f), new Quaternionf()));
+                    rack.addPassenger(display);
+                // Replace item
+                } else {
+                    var lastDisplay = (ItemDisplay) itemDisplays.get(itemDisplays.size() - 1);
+                    getBackItem(player, handItem, lastDisplay);
+                    lastDisplay.setItemStack(itemToPlace);
+                }
+            // Remove item
+            } else if (itemDisplays.size() > 0) {
+                var lastDisplay = (ItemDisplay) itemDisplays.get(itemDisplays.size() - 1);
+                getBackItem(player, handItem, lastDisplay);
+                lastDisplay.remove();
+            }
+        // On break furniture
+        } else {
+            CustomFurniture furniture = CustomFurniture.byAlreadySpawned(entityInFront(player));
+            if (furniture == null) return;
+
+            var rack = furniture.getEntity();
+            Location loc = furniture.getEntity().getLocation();
+            var itemDisplays = rack.getPassengers().stream().map(e -> (ItemDisplay) e).toList();
+
+            itemDisplays.forEach(display -> {
+                loc.getWorld().dropItemNaturally(loc, display.getItemStack());
+                display.remove();
+            });
+        }
+    }
+}

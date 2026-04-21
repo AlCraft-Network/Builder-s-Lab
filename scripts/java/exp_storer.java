@@ -1,0 +1,77 @@
+package scripts.java;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
+
+import dev.lone.itemsadder.api.CustomStack;
+import dev.lone.itemsadder.api.scriptinginternal.ItemScript;
+
+import static dev.lone.itemsadder.api.scriptinginternal.ItemsUtils.*;
+import static dev.lone.itemsadder.api.scriptinginternal.WorldUtils.*;
+import static dev.lone.itemsadder.api.scriptinginternal.ScriptingUtils.*;
+
+public class exp_storer extends ItemScript {
+    private int toEXPPoints(int level) {
+        if (level <= 16) return level * level + 6 * level;
+        if (level <= 31) return (int) (2.5 * level * level - 40.5 * level + 360);
+        return (int) (4.5 * level * level - 162.5 * level + 2220);
+    }
+
+    private int toNextLevel(int level) {
+        if (level <= 15) return 2 * level + 7;
+        if (level <= 30) return 5 * level - 38;
+        return 9 * level - 158;
+    }
+
+    private void updateMeta(ItemStack itemStack, int exp, String namespace, String key, String model) {
+        setDataInt(itemStack, namespace, key, exp);
+        ItemMeta meta = itemStack.getItemMeta();
+        List<String> newLore = new ArrayList<>(meta.getLore().subList(0, 2));
+        if (exp > 0) newLore.add("§fEXP:§a " + exp);
+        meta.setLore(newLore);
+        meta.setCustomModelData(customStack(model).getItemStack().getItemMeta().getCustomModelData());
+        itemStack.setItemMeta(meta);
+    }
+
+    @Override
+    public void handleEvent(Plugin plugin, Event event, Player player, CustomStack customStack, ItemStack vanillaItem) {
+        if (event instanceof PlayerInteractEvent interactEvent) {
+            var namespace = customStack.getNamespace();
+            var expKey = "stored_exp";
+            var clickedBlock = interactEvent.getClickedBlock();
+            
+            if (clickedBlock != null && clickedBlock.getType() == Material.BOOKSHELF) {
+                int storedExp = getDataInt(vanillaItem, namespace, expKey, 0);
+                if (storedExp > 0) {
+                    player.giveExp(storedExp);
+                    
+                    updateMeta(vanillaItem, 0, namespace, expKey, customStack.getNamespacedID());
+                    playParticle(player.getLocation().add(0, 1, 0), "minecraft:enchant", 20, 0.5, 0.5, 0.5, 0.1);
+                } else {
+                    msg(player, "<red>This book has no stored experience.</red>", true);
+                }
+            } else {
+                int level = player.getLevel();
+                int playerExp = toEXPPoints(level) + (int) (player.getExp() * toNextLevel(level));
+                int expToStore = Math.min(playerExp, toNextLevel(level - 1));
+
+                if (expToStore > 0) {
+                    player.giveExp(-expToStore);
+
+                    int storedExp = getDataInt(vanillaItem, namespace, expKey, 0) + expToStore;
+                    updateMeta(vanillaItem, storedExp, namespace, expKey, customStack.getNamespacedID() + "_full");
+                } else {
+                    msg(player, "<red>You don't have enough experience to store.</red>", true);
+                }
+            }
+        }
+    }
+}

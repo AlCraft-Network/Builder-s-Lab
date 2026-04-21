@@ -182,11 +182,11 @@ scripts:
   hello_world:
     path: scripts/hello_world.jspp
   skeleton_totem:
-    path: scripts/skeleton_totem.jspp
+    path: scripts/java/skeleton_totem.java
   slime_spawner:
     path: scripts/slime_spawner.jspp
   exp_storer:
-    path: scripts/exp_storer.jspp
+    path: scripts/java/exp_storer.java
   mineralized_pile:
     path: scripts/mineralized_pile.jspp
   enriched_bone_meal:

@@ -425,4 +425,4 @@ items:
             name: wall_rack
 scripts:
   wall_rack:
-    path: scripts/wall_rack.jspp
+    path: scripts/java/wall_rack.java

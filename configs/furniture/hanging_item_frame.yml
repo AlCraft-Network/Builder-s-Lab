@@ -71,6 +71,6 @@ items:
             name: hanging_item_frame_interact
 scripts:
   hanging_item_frame:
-    path: scripts/hanging_item_frame.jspp
+    path: scripts/java/hanging_item_frame.java
   hanging_item_frame_interact:
-    path: scripts/hanging_item_frame_interact.jspp
+    path: scripts/java/hanging_item_frame_interact.java
