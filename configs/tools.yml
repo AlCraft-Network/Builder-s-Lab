@@ -231,13 +231,13 @@ items:
           name: builderslab:sickle
 scripts:
   block_punch:
-    path: scripts/block_punch.jspp
+    path: scripts/java/block_punch.java
   rotate_block:
     path: scripts/rotate_block.jspp
   random_block_placer:
-    path: scripts/random_block_placer.jspp
+    path: scripts/java/random_block_placer.java
   block_replacer:
-    path: scripts/block_replacer.jspp
+    path: scripts/java/block_replacer.java
   armor_stand_editor:
     path: scripts/armor_stand_editor.jspp
   sickle:

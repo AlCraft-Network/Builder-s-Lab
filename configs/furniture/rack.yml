@@ -425,4 +425,4 @@ items:
             name: rack
 scripts:
   rack:
-    path: scripts/rack.jspp
+    path: scripts/java/rack.java
