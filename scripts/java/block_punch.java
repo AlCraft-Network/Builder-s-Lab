@@ -63,7 +63,7 @@ public class block_punch extends ItemScript {
             } else {
                 loc.getWorld().spawnParticle(Particle.ITEM, clickedBlock.getLocation().add(0.5, 0.5, 0.5), 16, 0.2, 0.2, 0.2, 0.1, newStack(clickedBlock.getType()));
                 loc.getWorld().playSound(clickedBlock.getLocation(), clickedBlock.getBlockData().getSoundGroup().getBreakSound(), 1.0f, 1.0f);
-                placeBlock(newBlock, clickedBlock.getType());
+                newBlock.setBlockData(clickedBlock.getBlockData());
                 removeBlock(clickedBlock);
             }
 
