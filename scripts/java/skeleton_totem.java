@@ -79,6 +79,7 @@ public class skeleton_totem extends ItemScript {
     public void handleEvent(Plugin plugin, Event event, Player player, CustomStack customStack, ItemStack vanillaItem) {
         if (event instanceof PlayerInteractEvent interactEvent) {
             Block clickedBlock = interactEvent.getClickedBlock();
+            if (clickedBlock == null) return;
             Location loc = clickedBlock.getLocation();
 
             boolean isValidTotem = true;
