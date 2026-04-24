@@ -2,6 +2,7 @@ package scripts.java;
 
 import java.util.Map;
 
+import org.bukkit.Material;
 import org.bukkit.Location;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
@@ -22,6 +23,25 @@ import dev.lone.itemsadder.api.scriptinginternal.ItemScript;
 import static dev.lone.itemsadder.api.scriptinginternal.PlayerUtils.*;
 
 public class rack extends ItemScript {
+    private record DisplaySettings(Vector3f offset, Vector3f scale, float rotX, float rotY, float rotZ) {}
+    private DisplaySettings settings(float offx, float offy, float offz, float scale, float rotX, float rotY, float rotZ) {
+        return new DisplaySettings(new Vector3f(offx, offy, offz), new Vector3f(scale, scale, scale), rotX, rotY, rotZ);
+    }
+
+    private final DisplaySettings DEFAULT_SETTINGS = settings(0.0f, 0.55f, 0.0f, 0.8f, 0.0f, 22.5f, 135.0f);
+    private final Map<String, DisplaySettings> ITEM_SETTINGS = Map.ofEntries(
+        Map.entry("minecraft:wooden_spear", settings(0.0f, 1.0f, 0.0f, 1.5f, 0.0f, 22.5f, 45.0f)),
+        Map.entry("minecraft:stone_spear", settings(0.0f, 1.0f, 0.0f, 1.5f, 0.0f, 22.5f, 45.0f)),
+        Map.entry("minecraft:copper_spear", settings(0.0f, 1.0f, 0.0f, 1.5f, 0.0f, 22.5f, 45.0f)),
+        Map.entry("minecraft:iron_spear", settings(0.0f, 1.0f, 0.0f, 1.5f, 0.0f, 22.5f, 45.0f)),
+        Map.entry("minecraft:golden_spear", settings(0.0f, 1.0f, 0.0f, 1.5f, 0.0f, 22.5f, 45.0f)),
+        Map.entry("minecraft:diamond_spear", settings(0.0f, 1.0f, 0.0f, 1.5f, 0.0f, 22.5f, 45.0f)),
+        Map.entry("minecraft:netherite_spear", settings(0.0f, 1.0f, 0.0f, 1.5f, 0.0f, 22.5f, 45.0f)),
+        Map.entry("minecraft:trident", settings(-0.65f, 2.2f, -0.26f, 1.0f, 0.0f, 22.5f, 0.0f)),
+        Map.entry("minecraft:shield", settings(-0.5f, 1.5f, -0.4f, 1.0f, 19.0f, 10.0f, 0.0f)),
+        Map.entry("minecraft:spyglass", settings(0.0f, 0.8f, 0.0f, 1.0f, 0.0f, 22.5f, 0.0f))
+    );
+
     private void getBackItem(Player player, ItemStack handItem, ItemDisplay displayEntity) {
         ItemStack item = displayEntity.getItemStack();
 
@@ -37,6 +57,25 @@ public class rack extends ItemScript {
         try {
             if (event instanceof Cancellable e) e.setCancelled(true);
         } catch (Exception ignored) {}
+    }
+
+    private String getItemKey(ItemStack item) {
+        CustomStack customStack = CustomStack.byItemStack(item);
+        if (customStack != null) return customStack.getNamespacedID();
+
+        Material material = item.getType();
+        return "minecraft:" + material.name().toLowerCase();
+    }
+
+    private Transformation getTransformationFor(ItemStack item, int position) {
+        DisplaySettings settings = ITEM_SETTINGS.getOrDefault(getItemKey(item), DEFAULT_SETTINGS);
+        Vector3f translation = new Vector3f((position == 0 ? -0.15f : 0.15f) + settings.offset().x(), settings.offset().y(), settings.offset().z());
+        Quaternionf leftRotation = new Quaternionf()
+            .rotateX((float) Math.toRadians(settings.rotX()))
+            .rotateY((float) Math.toRadians(settings.rotY()))
+            .rotateZ((float) Math.toRadians(settings.rotZ()));
+
+        return new Transformation(translation, leftRotation, new Vector3f(settings.scale()), new Quaternionf());
     }
 
     @Override
@@ -61,13 +100,14 @@ public class rack extends ItemScript {
                 if (itemDisplays.size() < 2) {
                     var display = rack.getWorld().spawn(rack.getLocation(), ItemDisplay.class);
                     display.setItemStack(itemToPlace);
-                    display.setTransformation(new Transformation(new Vector3f((itemDisplays.isEmpty() ? -0.15f : 0.15f), 0.55f, 0.0f), new Quaternionf().rotateY((float) Math.toRadians(22.5f)).rotateZ((float) Math.toRadians(135.0f)), new Vector3f(0.8f, 0.8f, 0.8f), new Quaternionf()));
+                    display.setTransformation(getTransformationFor(itemToPlace, itemDisplays.size()));
                     rack.addPassenger(display);
                 // Replace item
                 } else {
                     var lastDisplay = (ItemDisplay) itemDisplays.get(itemDisplays.size() - 1);
                     getBackItem(player, handItem, lastDisplay);
                     lastDisplay.setItemStack(itemToPlace);
+                    lastDisplay.setTransformation(getTransformationFor(itemToPlace, itemDisplays.size() - 1));
                 }
             // Remove item
             } else if (itemDisplays.size() > 0) {
